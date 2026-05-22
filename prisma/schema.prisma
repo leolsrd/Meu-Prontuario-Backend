@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Funcao {
+  idFuncao String @id @default(uuid())
+  funcao String
+  description String? // Preenchimento opcional
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // Prisma gerencia a lista de funcionários nesta função
+  funcionarios Funcionario[]
+
+  // Definindo o nome da tabela
+  @@map("funcoes")
+}
+
+model Funcionario {
+  idFuncionario String @id @default(uuid())
+  status Boolean @default(true)
+  nome String
+  cpfCnpj String? @db.VarChar(14) @default("00000000000")
+  login String
+  senha String
+  telefone String?
+  dataNascimento DateTime? @db.Date
+  cep String?
+  logradouro String?
+  complemento String?
+  numero Int?
+  bairro String?
+  cidade String?
+  uf String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // Criando a chave estrangeira que conecta com a tabela função
+  idFuncao String
+  funcao Funcao @relation(fields: [idFuncao], references: [idFuncao], onDelete: Cascade)
+
+  medicos Medico[]
+
+  @@map("funcionarios")
+}
+
+model Medico {
+  idMedico String @id @default(uuid())
+  crm String
+  especialidade String
+  ufCRM String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  idFuncionario String
+  funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
+
+  @@map("medicos")
+}

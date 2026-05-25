@@ -1,10 +1,12 @@
 import { Router, Request, Response } from 'express';
+import { validateSchema } from './middlewares/validateSchema';
+// * Funções
 import { ListFuncaoController } from './controllers/funcao/ListFuncaoController';
 // * Funcionários
 import AuthFuncionarioController from './controllers/funcionario/AuthFuncionarioController';
-import { validateSchema } from './middlewares/validateSchema';
-import { createFuncionarioSchema } from './schemas/funcionarioSchema';
+import { authFuncinarioSchema, createFuncionarioSchema, updateFuncionarioSchema } from './schemas/funcionarioSchema';
 import { CreateFuncionarioController } from './controllers/funcionario/CreateFuncionarioController';
+import { UpdateFuncionarioController } from './controllers/funcionario/UpdateFuncionarioController';
 
 const router: Router = Router();
 
@@ -21,11 +23,17 @@ router.post(
   new CreateFuncionarioController().handle
 );
 
-
-// ^ Falta testar
 router.post(
   "/session",
-  new AuthFuncionarioController().handle
+  validateSchema(authFuncinarioSchema),
+  new AuthFuncionarioController().handle,
+)
+
+// ^ Rota para alterar funcionário?
+router.put(
+  "/funcionario/atualizar",
+  validateSchema(updateFuncionarioSchema),
+  new UpdateFuncionarioController().handle
 )
 
 

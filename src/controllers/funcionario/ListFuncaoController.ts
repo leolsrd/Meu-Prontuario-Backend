@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { ListFuncaoService } from "../../services/funcao/ListFuncaoService";
+import { ListFuncionarioService } from "../../services/funcionario/ListFuncionarioService";
 
-class ListFuncaoController {
+class ListFuncionarioController {
   async handle(req: Request, res: Response) {
-    const listFuncaoService = new ListFuncaoService();
+    const listFuncionarioService = new ListFuncionarioService();
 
-    const resultFuncoes = await listFuncaoService.execute();
+    const result = await listFuncionarioService.execute();
 
-    return res.status(200).json(resultFuncoes);
+    return res.status(200).json(result);
   }
 }
 
-export { ListFuncaoController };
+export { ListFuncionarioController };

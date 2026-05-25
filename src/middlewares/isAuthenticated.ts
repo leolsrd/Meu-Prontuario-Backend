@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 interface PayLoad {
   sub: string;
 }
+
+const { verify } = jwt
 
 export function isAuthenticated(
   req: Request,
@@ -23,7 +25,7 @@ export function isAuthenticated(
   try {
     const { sub } = verify(
       token!,
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET as string,
     ) as PayLoad
 
     req.user_id = sub;

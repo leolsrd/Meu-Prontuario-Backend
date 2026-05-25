@@ -15,17 +15,23 @@ router.get('/teste', (req: Request, res: Response) => {
 export { router };
 
 // * Rotas de Funcionários
+// ? Rota para criar funcionário
 router.post(
   "/funcionario",
   validateSchema(createFuncionarioSchema),
   new CreateFuncionarioController().handle
 );
 
-
-// ^ Falta testar
+// ? Rota de Autenticação do funcionário
 router.post(
   "/session",
   new AuthFuncionarioController().handle
+)
+
+// ? Rota para listar funcionários
+router.get(
+  "/funcionarios",
+  new ListFuncaoController().handle
 )
 
 

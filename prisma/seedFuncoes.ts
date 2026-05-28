@@ -10,10 +10,10 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 const listFuncoesPadrao = [
-  {funcao: "Admin", description: "Administrador com acesso total"},
-  {funcao: "Teste", description: "Teste"},
-  {funcao: "Medico", description: "Médico e este terá que cadastrar o CRM"},
-  {funcao: "Atendente", description: "Atendente"},
+  {funcao: "Admin", descricao: "Administrador com acesso total"},
+  {funcao: "Teste", descricao: "Teste"},
+  {funcao: "Medico", descricao: "Médico e este terá que cadastrar o CRM"},
+  {funcao: "Atendente", descricao: "Atendente"},
 ]
 
 async function main() {

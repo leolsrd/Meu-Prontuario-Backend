@@ -1,17 +1,25 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import CreateFuncionarioService from "../../services/funcionario/CreateFuncionarioService";
 
 class CreateFuncionarioController {
+  async handle(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = req.body;
 
-  async handle(req: Request, res: Response) {
-    const data = req.body;
+      const createFuncionarioService = new CreateFuncionarioService();
 
-    const createFuncionarioService = new CreateFuncionarioService();
+      const funcionario = await createFuncionarioService.execute(
+        req,
+        res,
+        data,
+      );
 
-    const funcionario = await createFuncionarioService.execute(data);
-
-    return res.status(201).json(funcionario);
+      return res.status(201).json(funcionario);
+    } catch (error) {
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+    }
   }
 }
 
-export { CreateFuncionarioController }
+export { CreateFuncionarioController };

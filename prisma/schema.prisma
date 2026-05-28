@@ -15,7 +15,8 @@ datasource db {
 model Funcao {
   idFuncao String @id @default(uuid())
   funcao String
-  description String? // Preenchimento opcional
+  status Boolean @default(true)
+  descricao String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

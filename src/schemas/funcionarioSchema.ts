@@ -103,13 +103,6 @@ export const authFuncinarioSchema = z.object({
   })
 });
 
-const aceitaStringVazia = z.preprocess(
-  (val: string | null | "") => val?.trim() || "00.000-000",
-  z.string()
-  .min(8, { message: "O cep deve ter 8 dígitos" })
-  .trim()
-)
-
 export const updateFuncionarioSchema = z.object({
   body: z.object({
     idFuncionario: z.string(),

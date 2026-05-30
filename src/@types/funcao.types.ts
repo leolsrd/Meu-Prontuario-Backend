@@ -3,3 +3,10 @@ export interface CreateFuncaoServiceProps {
   status?: boolean;
   descricao?: string;
 }
+
+export interface UpdateFuncaoServiceProps {
+  idFuncao: string;
+  status?: boolean;
+  funcao?: string;
+  descricao?: string;
+}

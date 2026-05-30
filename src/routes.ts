@@ -14,7 +14,8 @@ import { UpdateFuncionarioController } from "./controllers/funcionario/UpdateFun
 import { ListFuncionarioController } from "./controllers/funcionario/ListFuncaoController";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
 import { CreateFuncaoController } from "./controllers/funcao/CreateFuncaoController";
-import { createFuncaoSchema } from "./schemas/funcaoSchema";
+import { createFuncaoSchema, updateFuncaoSchema } from "./schemas/funcaoSchema";
+import { UpdateFuncaoController } from "./controllers/funcao/UpdateFuncaoController";
 
 const router: Router = Router();
 
@@ -65,4 +66,12 @@ router.post(
   isAuthenticated,
   validateSchema(createFuncaoSchema),
   new CreateFuncaoController().handle,
+);
+
+// ? Rota para atualizar funções
+router.put(
+  "/funcoes/atualizar",
+  isAuthenticated,
+  validateSchema(updateFuncaoSchema),
+  new UpdateFuncaoController().handle,
 );

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import prismaClient from "../../prisma";
 import { hash } from "bcryptjs";
-import { CreateFuncionarioServiceProps } from "../../@types/funcionario.types";
 import removeMascaraDevolveNumero from "../../utils/removeMascara.utils";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import {
@@ -10,6 +9,11 @@ import {
   telefoneUndefinedSetZero,
 } from "../../utils/stringVaziaSetZero.utils";
 import { returnError } from "../../utils/returnError";
+import {
+  CreateMedicoServiceProps,
+  MedicoServiceProps,
+} from "../../@types/medico.types";
+import { CreateMedicoService } from "../medico/CreateMedicoService";
 
 class CreateFuncionarioService {
   async execute(
@@ -31,7 +35,10 @@ class CreateFuncionarioService {
       bairro,
       cidade,
       uf,
-    }: CreateFuncionarioServiceProps,
+      crm,
+      especialidade,
+      ufCRM,
+    }: MedicoServiceProps,
   ) {
     try {
       const funcionarioExists = await prismaClient.funcionario.findFirst({
@@ -115,16 +122,69 @@ class CreateFuncionarioService {
       if (bairro) data.bairro = bairro;
       if (cidade) data.cidade = cidade;
       if (uf) data.uf = uf;
+      if (crm) data.crm = crm;
+      if (especialidade) data.especialidade = especialidade;
+      if (ufCRM) data.ufCRM = ufCRM;
 
-      const funcionario = await prismaClient.funcionario.create({
-        data,
+      const result = await prismaClient.$transaction(async (tx) => {
+        // * Validação para médicos
+        const getFuncaoMedico = await prismaClient.funcao.findFirst({
+          where: {
+            idFuncao: idFuncao,
+          },
+        });
+
+        if (getFuncaoMedico?.funcao === "Medico") {
+          if (data.crm && data.especialidade && data.ufCRM) {
+            console.log("Entrou no if do médico");
+            const medicoCriado = await new CreateMedicoService().execute(
+              req,
+              res,
+              data,
+              (tx = prismaClient),
+            );
+
+            return medicoCriado;
+          } else {
+            return returnError({
+              messageConsole:
+                "Dados de médico faltando (CRM, especialidade e UF/CRM)",
+              statusCode: 400,
+              messageApi:
+                "Dados de médico faltando (CRM, especialidade e UF/CRM)",
+              res,
+            });
+          }
+        } else {
+          const funcionarioCriado = await tx.funcionario.create({
+            data: {
+              status: data.status,
+              nome: data.nome,
+              cpfCnpj: data.cpfCnpj,
+              login: data.login,
+              senha: data.senha,
+              telefone: data.telefone,
+              dataNascimento: data.dataNascimento,
+              cep: data.cep,
+              logradouro: data.logradouro,
+              complemento: data.complemento,
+              numero: data.numero,
+              bairro: data.bairro,
+              cidade: data.cidade,
+              uf: data.uf,
+              idFuncao: data.idFuncao,
+            },
+          });
+
+          return funcionarioCriado;
+        }
       });
 
-      return funcionario;
+      return result;
     } catch (error) {
       throw new Error("Falha ao criar funcionario", { cause: error });
     }
   }
 }
 
-export default CreateFuncionarioService;
+export { CreateFuncionarioService };

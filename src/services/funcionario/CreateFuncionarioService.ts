@@ -3,16 +3,9 @@ import prismaClient from "../../prisma";
 import { hash } from "bcryptjs";
 import removeMascaraDevolveNumero from "../../utils/removeMascara.utils";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
-import {
-  cepUndefinedSetZero,
-  cpfCnpjUndefinedVaziaSetZero,
-  telefoneUndefinedSetZero,
-} from "../../utils/stringVaziaSetZero.utils";
+import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 import { returnError } from "../../utils/returnError";
-import {
-  CreateMedicoServiceProps,
-  MedicoServiceProps,
-} from "../../@types/medico.types";
+import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
 
 class CreateFuncionarioService {
@@ -65,7 +58,7 @@ class CreateFuncionarioService {
       }
 
       if (!cpfCnpj) {
-        cpfCnpj = cpfCnpjUndefinedVaziaSetZero(cpfCnpj!);
+        cpfCnpj = StringVaziaOrUndefinedSetNull(cpfCnpj!);
       }
 
       if (telefone) {
@@ -73,7 +66,7 @@ class CreateFuncionarioService {
       }
 
       if (!telefone) {
-        telefone = telefoneUndefinedSetZero(telefone!);
+        telefone = StringVaziaOrUndefinedSetNull(telefone!);
       }
 
       if (typeof status === "string") {
@@ -85,7 +78,7 @@ class CreateFuncionarioService {
       }
 
       if (!cep) {
-        cep = cepUndefinedSetZero(cep!);
+        cep = StringVaziaOrUndefinedSetNull(cep!);
       }
 
       const cpfCnpjExists = await prismaClient.funcionario.findFirst({
@@ -94,7 +87,7 @@ class CreateFuncionarioService {
         },
       });
 
-      if (cpfCnpjExists && cpfCnpjExists!.cpfCnpj !== "00000000000") {
+      if (cpfCnpjExists && cpfCnpjExists!.cpfCnpj !== null) {
         return returnError({
           messageConsole: "CPF/CNPJ já cadastrado no sistema",
           statusCode: 400,
@@ -127,13 +120,13 @@ class CreateFuncionarioService {
       if (ufCRM) data.ufCRM = ufCRM;
 
       const result = await prismaClient.$transaction(async (tx) => {
-        // * Validação para médicos
         const getFuncaoMedico = await prismaClient.funcao.findFirst({
           where: {
             idFuncao: idFuncao,
           },
         });
 
+        // * Validação para cadastrar médicos
         if (getFuncaoMedico?.funcao === "Medico") {
           if (data.crm && data.especialidade && data.ufCRM) {
             console.log("Entrou no if do médico");
@@ -148,14 +141,15 @@ class CreateFuncionarioService {
           } else {
             return returnError({
               messageConsole:
-                "Dados de médico faltando (CRM, especialidade e UF/CRM)",
+                "Dados de médico faltando (CRM, especialidade ou UF/CRM)",
               statusCode: 400,
               messageApi:
-                "Dados de médico faltando (CRM, especialidade e UF/CRM)",
+                "Dados de médico faltando (CRM, especialidade ou UF/CRM)",
               res,
             });
           }
         } else {
+          // * Cadastrar funcionário não médico.
           const funcionarioCriado = await tx.funcionario.create({
             data: {
               status: data.status,
@@ -182,6 +176,7 @@ class CreateFuncionarioService {
 
       return result;
     } catch (error) {
+      console.error(error);
       throw new Error("Falha ao criar funcionario", { cause: error });
     }
   }

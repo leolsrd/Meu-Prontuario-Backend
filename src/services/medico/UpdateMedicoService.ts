@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import prismaClient from "../../prisma";
-import { hash } from "bcryptjs";
-import { MedicoServiceProps } from "../../@types/medico.types";
+import { UpdateMedicoServiceProps } from "../../@types/medico.types";
 import { returnError } from "../../utils/returnError";
+import { hash } from "bcryptjs";
 
-class CreateMedicoService {
+class UpdateMedicoService {
   async execute(
     req: Request,
     res: Response,
-    data: MedicoServiceProps,
+    data: UpdateMedicoServiceProps,
     tx = prismaClient,
   ) {
     try {
@@ -18,7 +18,7 @@ class CreateMedicoService {
         },
       });
 
-      if (crmExist) {
+      if (crmExist && crmExist.idFuncionario !== data.idFuncionario) {
         return returnError({
           messageConsole: "Já existe um médico cadastrado com este CRM",
           statusCode: 400,
@@ -27,24 +27,31 @@ class CreateMedicoService {
         });
       }
 
-      const senhaCheck =
-        data.senha ?? (await process.env.SENHA_FUNCIONARIO_TESTE);
+      const idFuncionarioMedico = await prismaClient.medico.findFirst({
+        where: {
+          idFuncionario: data.idFuncionario,
+        },
+      });
 
-      const senhaHash = await hash(senhaCheck!, 8);
-
-      const medico = await tx.medico.create({
+      const medico = await tx.medico.update({
+        where: {
+          // ^ Vai depender do select acima se vai dar certo ou não.
+          idMedico: idFuncionarioMedico?.idMedico,
+        },
         data: {
           crm: data.crm,
           especialidade: data.especialidade,
           ufCRM: data.ufCRM,
           funcionario: {
-            create: {
+            update: {
               login: data.login,
               nome: data.nome,
               idFuncao: data.idFuncao,
               status: data.status,
               cpfCnpj: data.cpfCnpj,
-              senha: senhaHash,
+              senha: data.senha
+                ? await hash(data.senha, 8)
+                : process.env.SENHA_FUNCIONARIO_TESTE,
               telefone: data.telefone,
               dataNascimento: data.dataNascimento,
               cep: data.cep,
@@ -92,4 +99,4 @@ class CreateMedicoService {
   }
 }
 
-export { CreateMedicoService };
+export { UpdateMedicoService };

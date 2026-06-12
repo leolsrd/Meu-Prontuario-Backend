@@ -3,6 +3,7 @@ import prismaClient from "../../prisma";
 import { returnError } from "../../utils/returnError";
 import { UpdateFuncaoServiceProps } from "../../@types/funcao.types";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
+import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 
 class UpdateFuncaoService {
   async execute(
@@ -24,6 +25,14 @@ class UpdateFuncaoService {
           messageApi: "Função não encontrada",
           res,
         });
+      }
+
+      if (funcao === undefined || funcao === "") {
+        funcao = idFuncaoExists?.funcao;
+      }
+
+      if (descricao === undefined || descricao === "") {
+        descricao = StringVaziaOrUndefinedSetNull(descricao!);
       }
 
       if (typeof status === "string") {

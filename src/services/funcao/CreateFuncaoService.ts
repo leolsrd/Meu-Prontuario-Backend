@@ -3,6 +3,7 @@ import { CreateFuncaoServiceProps } from "../../@types/funcao.types";
 import prismaClient from "../../prisma";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import { returnError } from "../../utils/returnError";
+import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 
 class CreateFuncaoService {
   async execute(
@@ -40,8 +41,8 @@ class CreateFuncaoService {
         data.status = true;
       }
 
-      if (!data.descricao) {
-        data.descricao = "";
+      if (data.descricao === "") {
+        data.descricao = StringVaziaOrUndefinedSetNull(data.descricao);
       }
 
       if (typeof data.status === "string") {

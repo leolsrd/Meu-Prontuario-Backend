@@ -2,19 +2,18 @@ export interface CreateFuncionarioServiceProps {
   login: string;
   nome: string;
   idFuncao: string;
-  // ? Pode ser nulo
   status?: boolean;
-  cpfCnpj?: string;
+  cpfCnpj?: string | null;
   senha?: string;
-  telefone?: string;
+  telefone?: string | null;
   dataNascimento?: Date;
-  cep?: string;
-  logradouro?: string;
-  complemento?: string;
+  cep?: string | null;
+  logradouro?: string | null;
+  complemento?: string | null;
   numero?: number;
-  bairro?: string;
-  cidade?: string;
-  uf?: string;
+  bairro?: string | null;
+  cidade?: string | null;
+  uf?: string | null;
 }
 
 export interface UpdateFuncionarioServiceProps {
@@ -23,15 +22,15 @@ export interface UpdateFuncionarioServiceProps {
   nome?: string;
   idFuncao?: string;
   status?: boolean;
-  cpfCnpj?: string;
+  cpfCnpj?: string | null;
   senha?: string;
-  telefone?: string;
+  telefone?: string | null;
   dataNascimento?: Date;
-  cep?: string;
-  logradouro?: string;
-  complemento?: string;
+  cep?: string | null;
+  logradouro?: string | null;
+  complemento?: string | null;
   numero?: number;
-  bairro?: string;
-  cidade?: string;
-  uf?: string;
+  bairro?: string | null;
+  cidade?: string | null;
+  uf?: string | null;
 }

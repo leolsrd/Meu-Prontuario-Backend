@@ -13,13 +13,13 @@ datasource db {
 }
 
 model Funcao {
-  idFuncao String @id @default(uuid())
+  idFuncao String @id @default(uuid()) @map("id_funcao")
   funcao String
   status Boolean @default(true)
   descricao String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   // Prisma gerencia a lista de funcionários nesta função
   funcionarios Funcionario[]
@@ -29,14 +29,14 @@ model Funcao {
 }
 
 model Funcionario {
-  idFuncionario String @id @default(uuid())
+  idFuncionario String @id @default(uuid()) @map("id_funcionario")
   status Boolean @default(true)
   nome String
-  cpfCnpj String? @db.VarChar(14) @default("00000000000")
+  cpfCnpj String? @unique @db.VarChar(14) @map("cpf_cnpj")
   login String
   senha String
   telefone String?
-  dataNascimento DateTime? @db.Date
+  dataNascimento DateTime? @db.Date @map("data_nascimento")
   cep String?
   logradouro String?
   complemento String?
@@ -45,8 +45,8 @@ model Funcionario {
   cidade String?
   uf String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   // Criando a chave estrangeira que conecta com a tabela função
   idFuncao String
@@ -58,13 +58,13 @@ model Funcionario {
 }
 
 model Medico {
-  idMedico String @id @default(uuid())
+  idMedico String @id @default(uuid()) @map("id_medico")
   crm String
   especialidade String
-  ufCRM String
+  ufCRM String @map("uf_crm")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   idFuncionario String @unique
   funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)

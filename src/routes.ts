@@ -11,11 +11,16 @@ import {
 } from "./schemas/funcionarioSchema";
 import { CreateFuncionarioController } from "./controllers/funcionario/CreateFuncionarioController";
 import { UpdateFuncionarioController } from "./controllers/funcionario/UpdateFuncionarioController";
-import { ListFuncionarioController } from "./controllers/funcionario/ListFuncaoController";
+import { ListFuncionarioController } from "./controllers/funcionario/ListFuncionarioController";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
 import { CreateFuncaoController } from "./controllers/funcao/CreateFuncaoController";
 import { createFuncaoSchema, updateFuncaoSchema } from "./schemas/funcaoSchema";
 import { UpdateFuncaoController } from "./controllers/funcao/UpdateFuncaoController";
+import { ListMedicoController } from "./controllers/medico/ListMedicoController";
+import {
+  listMedicoEspecialidade,
+  listMedicoStatus,
+} from "./schemas/medicoSchema";
 
 const router: Router = Router();
 
@@ -54,6 +59,29 @@ router.get(
   "/funcionario",
   isAuthenticated,
   new ListFuncionarioController().handle,
+);
+
+// ? Rota para listar todos médicos
+router.get(
+  "/medicos",
+  isAuthenticated,
+  new ListMedicoController().getMedicoAll,
+);
+
+// ? Rota para listar os médicos por status
+router.get(
+  "/medicos/status",
+  isAuthenticated,
+  validateSchema(listMedicoStatus),
+  new ListMedicoController().listMedicoStatus,
+);
+
+// ? Rota para listar os médicos por especialidade
+router.get(
+  "/medicos/especialidade",
+  isAuthenticated,
+  validateSchema(listMedicoEspecialidade),
+  new ListMedicoController().listMedicoEspecialidade,
 );
 
 // * Rotas de Funções

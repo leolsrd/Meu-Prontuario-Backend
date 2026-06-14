@@ -49,7 +49,7 @@ model Funcionario {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   // Criando a chave estrangeira que conecta com a tabela função
-  idFuncao String
+  idFuncao String @map("id_funcao")
   funcao Funcao @relation(fields: [idFuncao], references: [idFuncao], onDelete: Cascade)
 
   medicos Medico?

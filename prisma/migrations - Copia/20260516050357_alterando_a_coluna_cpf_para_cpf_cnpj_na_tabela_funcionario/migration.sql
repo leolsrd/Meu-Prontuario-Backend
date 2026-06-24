@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "funcionarios" ALTER COLUMN "cpf" SET DEFAULT '00000000000';

@@ -12,6 +12,21 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TipoAtendimento {
+  PARTICULAR
+  CONVENIO
+}
+
+enum TipoTitularidade {
+  TITULAR
+  DEPENDENTE
+}
+
+enum AbrangenciaPlano {
+  NACIONAL
+  REGIONAL
+}
+
 model Funcao {
   idFuncao String @id @default(uuid()) @map("id_funcao")
   funcao String
@@ -70,4 +85,74 @@ model Medico {
   funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
 
   @@map("medicos")
+}
+
+model Paciente {
+  idPaciente String @id @default(uuid()) @map("id_paciente")
+  nome String
+  status Boolean @default(true)
+  cpfCnpj String @unique @db.VarChar(14) @map("cpf_cnpj")
+  telefone String?
+  email String?
+  dataNascimento DateTime? @db.Date @map("data_nascimento")
+  sexo String?
+  cep String?
+  logradouro String?
+  complemento String?
+  numero Int?
+  bairro String?
+  cidade String?
+  uf String?
+
+  tipoAtendimento TipoAtendimento @default(PARTICULAR) @map("tipo_atendimento")
+
+  planoSaude PacientePlanoSaude?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("pacientes")
+}
+
+model Operadora {
+  idOperadora String @id @default(uuid()) @map("id_operadora")
+  nome String @unique // Unimed, Bradesco, Hapvida
+  registroAns String? @unique @map("registro_ans")
+  status Boolean @default(true)
+  planos PlanoCategoria[]
+
+  @@map("operadoras")
+}
+
+model PlanoCategoria {
+  idPlanoCategoria String @id @default(uuid()) @map("id_plano_categoria")
+  nome String // Básico, Executivo, Delta
+  idOperadora String @map("id_operadora")
+  operadora Operadora @relation(fields: [idOperadora], references: [idOperadora], onDelete: Cascade)
+  pacientes PacientePlanoSaude[]
+
+  @@unique([nome, idOperadora]) // Impede planos duplicados com o mesmo nome na mesma operadora
+  @@map("planos_categorias")
+}
+
+model PacientePlanoSaude {
+  idPacientePlanoSaude String @id @default(uuid()) @map("id_paciente_plano_saude")
+  idPaciente String @unique // Relação 1:1 com Paciente
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente], onDelete: Cascade)
+
+  idPlanoCategoria String @map("id_plano_categoria")
+  planoCategoria PlanoCategoria @relation(fields: [idPlanoCategoria], references: [idPlanoCategoria], onDelete: Cascade)
+
+  numeroCarteirinha String @map("numero_carteirinha") // Armazenar apenas caracteres alfanuméricos limpos
+  validade DateTime? // Pode ser nulo se a carteirinha não expirar
+  titularidade TipoTitularidade @default(TITULAR)
+  abrangencia AbrangenciaPlano @default(NACIONAL)
+
+  // Se for dependente, armazena os dados do titular
+  nomeTitular String? @map("nome_titular")
+  cpfTitular String? @map("cpf_titular")
+
+  // Restrição de unicidade: evita a mesma carteirinha na mesma categoria/operadora
+  @@unique([numeroCarteirinha, idPlanoCategoria])
+  @@map("paciente_planos_saude")
 }

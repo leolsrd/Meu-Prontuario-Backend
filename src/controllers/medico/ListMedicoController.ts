@@ -42,11 +42,6 @@ class ListMedicoController {
 
   async getMedicoAll(req: Request, res: Response) {
     try {
-      // const { especialidade } = req.query;
-
-      // console.log(especialidade);
-      // process.exit(1);
-
       const listMedicoService = new ListMedicoService();
 
       const medicos = await listMedicoService.listMedicoAll();

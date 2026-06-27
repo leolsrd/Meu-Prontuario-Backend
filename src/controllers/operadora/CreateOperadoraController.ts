@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CreateOperadoraService } from "../../services/operador/CreateOperadoraService";
+import { CreateOperadoraService } from "../../services/operadora/CreateOperadoraService";
 
 class CreateOperadoraController {
   async handle(req: Request, res: Response) {

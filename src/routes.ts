@@ -23,6 +23,7 @@ import {
 } from "./schemas/medicoSchema";
 import { createOperadoraSchema } from "./schemas/operadoraSchema";
 import { CreateOperadoraController } from "./controllers/operadora/CreateOperadoraController";
+import { ListOperadoraController } from "./controllers/operadora/ListOperadoraController";
 
 const router: Router = Router();
 
@@ -106,10 +107,18 @@ router.put(
   new UpdateFuncaoController().handle,
 );
 
+// * Rotas de Operadoras
 // ? Rota para criar uma Operadora
 router.post(
   "/operadora",
   isAuthenticated,
   validateSchema(createOperadoraSchema),
   new CreateOperadoraController().handle,
+);
+
+// ? Rota para listar operadoras
+router.get(
+  "/operadoras/status",
+  isAuthenticated,
+  new ListOperadoraController().listOperadoraStatus,
 );

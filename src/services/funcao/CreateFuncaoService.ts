@@ -15,9 +15,12 @@ class CreateFuncaoService {
     try {
       const funcaoExists = await prismaClient.funcao.findFirst({
         where: {
-          funcao: data.funcao,
+          nome: data.nome,
         },
       });
+
+      // console.log(funcaoExists);
+      // process.exit(1);
 
       if (funcaoExists && funcaoExists?.status === false) {
         return returnError({
@@ -51,7 +54,7 @@ class CreateFuncaoService {
 
       const funcao = await prismaClient.funcao.create({
         data: {
-          funcao: data.funcao,
+          nome: data.nome,
           descricao: data.descricao,
           status: data.status,
         },

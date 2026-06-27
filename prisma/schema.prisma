@@ -29,12 +29,12 @@ enum AbrangenciaPlano {
 
 model Funcao {
   idFuncao String @id @default(uuid()) @map("id_funcao")
-  funcao String
+  nome String @default("Admin")
   status Boolean @default(true)
   descricao String?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Prisma gerencia a lista de funcionários nesta função
   funcionarios Funcionario[]
@@ -61,7 +61,7 @@ model Funcionario {
   uf String?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Criando a chave estrangeira que conecta com a tabela função
   idFuncao String @map("id_funcao")
@@ -79,9 +79,9 @@ model Medico {
   ufCRM String @map("uf_crm")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  idFuncionario String @unique
+  idFuncionario String @unique @map("id_funcionario")
   funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
 
   @@map("medicos")
@@ -109,7 +109,7 @@ model Paciente {
   planoSaude PacientePlanoSaude?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("pacientes")
 }
@@ -121,6 +121,9 @@ model Operadora {
   status Boolean @default(true)
   planos PlanoCategoria[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@map("operadoras")
 }
 
@@ -130,6 +133,9 @@ model PlanoCategoria {
   idOperadora String @map("id_operadora")
   operadora Operadora @relation(fields: [idOperadora], references: [idOperadora], onDelete: Cascade)
   pacientes PacientePlanoSaude[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([nome, idOperadora]) // Impede planos duplicados com o mesmo nome na mesma operadora
   @@map("planos_categorias")
@@ -151,6 +157,9 @@ model PacientePlanoSaude {
   // Se for dependente, armazena os dados do titular
   nomeTitular String? @map("nome_titular")
   cpfTitular String? @map("cpf_titular")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Restrição de unicidade: evita a mesma carteirinha na mesma categoria/operadora
   @@unique([numeroCarteirinha, idPlanoCategoria])

@@ -4,14 +4,14 @@ import UpdateFuncaoService from "../../services/funcao/UpdateFuncaoService";
 class UpdateFuncaoController {
   async handle(req: Request, res: Response) {
     try {
-      const { idFuncao, status, funcao, descricao } = req.body;
+      const { idFuncao, status, nome, descricao } = req.body;
 
       const updateFuncaoService = new UpdateFuncaoService();
 
       const updateFuncao = await updateFuncaoService.execute(req, res, {
         idFuncao,
         status,
-        funcao,
+        nome,
         descricao,
       });
 

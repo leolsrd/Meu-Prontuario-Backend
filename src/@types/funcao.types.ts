@@ -1,5 +1,5 @@
 export interface CreateFuncaoServiceProps {
-  funcao: string;
+  nome: string;
   status?: boolean;
   descricao?: string | null;
 }
@@ -7,6 +7,6 @@ export interface CreateFuncaoServiceProps {
 export interface UpdateFuncaoServiceProps {
   idFuncao: string;
   status?: boolean;
-  funcao?: string;
+  nome?: string;
   descricao?: string | null;
 }

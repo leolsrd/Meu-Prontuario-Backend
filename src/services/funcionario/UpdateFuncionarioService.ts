@@ -98,7 +98,7 @@ class UpdateFuncionarioService {
           },
         });
 
-        if (getFuncaoMedico?.funcao === "Medico") {
+        if (getFuncaoMedico?.nome === "Medico") {
           if (data.crm && data.especialidade && data.ufCRM) {
             const medicoCriado = await new UpdateMedicoService().execute(
               req,

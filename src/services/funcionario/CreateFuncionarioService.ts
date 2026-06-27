@@ -127,9 +127,8 @@ class CreateFuncionarioService {
         });
 
         // * Validação para cadastrar médicos
-        if (getFuncaoMedico?.funcao === "Medico") {
+        if (getFuncaoMedico?.nome === "Medico") {
           if (data.crm && data.especialidade && data.ufCRM) {
-            console.log("Entrou no if do médico");
             const medicoCriado = await new CreateMedicoService().execute(
               req,
               res,
@@ -177,7 +176,7 @@ class CreateFuncionarioService {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error("Falha ao criar funcionario", { cause: error });
+      throw new Error("Falha ao criar funcionário", { cause: error });
     }
   }
 }

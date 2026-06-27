@@ -4,7 +4,7 @@ export interface CreateFuncionarioServiceProps {
   idFuncao: string;
   status?: boolean;
   cpfCnpj?: string | null;
-  senha?: string;
+  senha: string;
   telefone?: string | null;
   dataNascimento?: Date;
   cep?: string | null;

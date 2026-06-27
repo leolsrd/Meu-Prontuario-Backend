@@ -21,6 +21,8 @@ import {
   listMedicoEspecialidade,
   listMedicoStatus,
 } from "./schemas/medicoSchema";
+import { createOperadoraSchema } from "./schemas/operadoraSchema";
+import { CreateOperadoraController } from "./controllers/operadora/CreateOperadoraController";
 
 const router: Router = Router();
 
@@ -102,4 +104,12 @@ router.put(
   isAuthenticated,
   validateSchema(updateFuncaoSchema),
   new UpdateFuncaoController().handle,
+);
+
+// ? Rota para criar uma Operadora
+router.post(
+  "/operadora",
+  isAuthenticated,
+  validateSchema(createOperadoraSchema),
+  new CreateOperadoraController().handle,
 );

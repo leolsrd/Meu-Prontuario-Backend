@@ -1,3 +1,4 @@
+// import prisma from "../../prisma";
 import prismaClient from "../../prisma";
 
 class ListFuncaoService {
@@ -6,21 +7,22 @@ class ListFuncaoService {
       const funcoes = await prismaClient.funcao.findMany({
         select: {
           idFuncao: true,
-          funcao: true,
-          description: true,
+          nome: true,
+          descricao: true,
+          status: true,
           createdAt: true,
-          updatedAt: true
+          updatedAt: true,
         },
         orderBy: {
-          funcao: 'asc'
-        }
+          nome: "asc",
+        },
       });
 
-      return funcoes
+      return funcoes;
     } catch (error) {
-      throw new Error("Falha ao buscar as funções ", { cause: error })
+      throw new Error("Falha ao buscar as funções ", { cause: error });
     }
   }
 }
 
-export { ListFuncaoService }
+export { ListFuncaoService };

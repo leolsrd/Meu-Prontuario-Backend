@@ -19,7 +19,7 @@ const insertFuncionarioAdmin: CreateFuncionarioServiceProps = {
   nome: "Admin",
   login: "Admin",
   // * Tem que pegar um idFuncao do banco de dados correspondente a função em questão
-  idFuncao: "598c2e0a-6ed8-4918-946a-82d8aad4369e",
+  idFuncao: "4d792f88-3132-4ed7-ba35-b323d1deb875",
   status: true,
   cpfCnpj: null,
   senha: await hash(senhaFuncionarioAdmin!, 8),
@@ -38,7 +38,7 @@ const insertFuncionarioTeste: CreateFuncionarioServiceProps = {
   nome: "Teste",
   login: "Teste",
   // * Tem que pegar um idFuncao do banco de dados correspondente a função em questão
-  idFuncao: "e2135481-695b-4f82-97c0-ae0ec05fe1b0",
+  idFuncao: "49a58ece-d71f-486c-9691-a01174f9f1b1",
   status: true,
   cpfCnpj: null,
   senha: await hash(senhaFuncionarioTeste!, 8),

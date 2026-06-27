@@ -30,7 +30,7 @@ class ListMedicoService {
               updatedAt: true,
               funcao: {
                 select: {
-                  funcao: true,
+                  nome: true,
                 },
               },
             },
@@ -83,7 +83,7 @@ class ListMedicoService {
               updatedAt: true,
               funcao: {
                 select: {
-                  funcao: true,
+                  nome: true,
                 },
               },
             },
@@ -140,7 +140,7 @@ class ListMedicoService {
               updatedAt: true,
               funcao: {
                 select: {
-                  funcao: true,
+                  nome: true,
                 },
               },
             },

@@ -9,7 +9,7 @@ class UpdateFuncaoService {
   async execute(
     req: Request,
     res: Response,
-    { idFuncao, status, funcao, descricao }: UpdateFuncaoServiceProps,
+    { idFuncao, status, nome, descricao }: UpdateFuncaoServiceProps,
   ) {
     try {
       const idFuncaoExists = await prismaClient.funcao.findFirst({
@@ -27,8 +27,8 @@ class UpdateFuncaoService {
         });
       }
 
-      if (funcao === undefined || funcao === "") {
-        funcao = idFuncaoExists?.funcao;
+      if (nome === undefined || nome === "") {
+        nome = idFuncaoExists?.nome;
       }
 
       if (descricao === undefined || descricao === "") {
@@ -45,13 +45,13 @@ class UpdateFuncaoService {
         },
         data: {
           status: status,
-          funcao: funcao,
+          nome: nome,
           descricao: descricao,
         },
         select: {
           idFuncao: true,
           status: true,
-          funcao: true,
+          nome: true,
           descricao: true,
           createdAt: true,
           updatedAt: true,

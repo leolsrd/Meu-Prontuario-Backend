@@ -10,17 +10,17 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 const listFuncoesPadrao = [
-  { funcao: "Admin", descricao: "Administrador com acesso total" },
-  { funcao: "Teste", descricao: "Teste" },
-  { funcao: "Medico", descricao: "Médico e este terá que cadastrar o CRM" },
-  { funcao: "Atendente", descricao: "Atendente" },
+  { nome: "Admin", descricao: "Administrador com acesso total" },
+  { nome: "Teste", descricao: "Teste" },
+  { nome: "Medico", descricao: "Médico e este terá que cadastrar o CRM" },
+  { nome: "Atendente", descricao: "Atendente" },
 ];
 
 async function main() {
   // * verificando se no banco de dados já tem as funções padrões
   const existsFuncoesPadrao = await prisma.funcao.findMany({
     where: {
-      funcao: {
+      nome: {
         in: ["ADMIN", "Medico", "Atendente", "Teste"],
       },
     },
@@ -28,7 +28,7 @@ async function main() {
 
   if (existsFuncoesPadrao.length > 0) {
     console.log("Funções padrões já existem no banco de dados");
-    console.log(existsFuncoesPadrao.map((funcao) => funcao.funcao));
+    console.log(existsFuncoesPadrao.map((funcao) => funcao.nome));
     return;
   }
 

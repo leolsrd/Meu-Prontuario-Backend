@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { ListFuncaoService } from '../../services/funcao/ListFuncaoService';
+import { Request, Response } from "express";
+import { ListFuncaoService } from "../../services/funcao/ListFuncaoService";
 
 class ListFuncaoController {
   async handle(req: Request, res: Response) {
@@ -11,4 +11,4 @@ class ListFuncaoController {
   }
 }
 
-export { ListFuncaoController }
+export { ListFuncaoController };

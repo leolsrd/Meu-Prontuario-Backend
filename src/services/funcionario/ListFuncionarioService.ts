@@ -1,17 +1,17 @@
-import {Request, Response} from 'express';
-import prisma from '../../prisma';
+import { Request, Response } from "express";
+import prisma from "../../prisma";
 
 class ListFuncionarioService {
   async execute() {
     try {
-       const funcoes = await prisma.funcionario.findMany({
+      const funcionario = await prisma.funcionario.findMany({
         select: {
           nome: true,
           login: true,
           funcao: {
             select: {
-              funcao: true
-            }
+              nome: true,
+            },
           },
           cpfCnpj: true,
           telefone: true,
@@ -24,16 +24,15 @@ class ListFuncionarioService {
           cidade: true,
           uf: true,
           createdAt: true,
-          updatedAt: true
+          updatedAt: true,
         },
         orderBy: {
-          nome: 'asc'
-        }
+          nome: "asc",
+        },
       });
-      return funcoes;
-
+      return funcionario;
     } catch (error) {
-      throw new Error("Falha ao buscar os funcionários ", { cause: error })
+      throw new Error("Falha ao buscar os funcionários ", { cause: error });
     }
   }
 }

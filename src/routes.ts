@@ -28,6 +28,8 @@ import {
 import { CreateOperadoraController } from "./controllers/operadora/CreateOperadoraController";
 import { ListOperadoraController } from "./controllers/operadora/ListOperadoraController";
 import { UpdateOperadoraController } from "./controllers/operadora/UpdateOperadoraController";
+import { CreatePlanoCategoriaController } from "./controllers/planoCategoria/CreatePlanoCategoriaController";
+import { createPlanoCategoriaSchema } from "./schemas/planoCategoriaSchema";
 
 const router: Router = Router();
 
@@ -133,4 +135,13 @@ router.put(
   isAuthenticated,
   validateSchema(updateOperadoraSchema),
   new UpdateOperadoraController().handle,
+);
+
+// * Rota para Plano Categoria
+// ? Rota para cadastrar plano categoria
+router.post(
+  "/plano-categoria",
+  isAuthenticated,
+  validateSchema(createPlanoCategoriaSchema),
+  new CreatePlanoCategoriaController().handle,
 );

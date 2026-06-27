@@ -21,9 +21,13 @@ import {
   listMedicoEspecialidade,
   listMedicoStatus,
 } from "./schemas/medicoSchema";
-import { createOperadoraSchema } from "./schemas/operadoraSchema";
+import {
+  createOperadoraSchema,
+  updateOperadoraSchema,
+} from "./schemas/operadoraSchema";
 import { CreateOperadoraController } from "./controllers/operadora/CreateOperadoraController";
 import { ListOperadoraController } from "./controllers/operadora/ListOperadoraController";
+import { UpdateOperadoraController } from "./controllers/operadora/UpdateOperadoraController";
 
 const router: Router = Router();
 
@@ -121,4 +125,12 @@ router.get(
   "/operadoras/status",
   isAuthenticated,
   new ListOperadoraController().listOperadoraStatus,
+);
+
+// ? Rota para atualizar operadoras
+router.put(
+  "/operadora/atualizar",
+  isAuthenticated,
+  validateSchema(updateOperadoraSchema),
+  new UpdateOperadoraController().handle,
 );

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import prismaClient from "../../prisma";
-import { OperadoraServiceProps } from "../../@types/Operadora.types";
 import { returnError } from "../../utils/returnError";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
+import { OperadoraServiceProps } from "../../@types/Operadora.types";
 
 class CreateOperadoraService {
   async execute(req: Request, res: Response, data: OperadoraServiceProps) {

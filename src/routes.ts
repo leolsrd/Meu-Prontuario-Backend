@@ -34,6 +34,7 @@ import {
   updatePlanoCategoriaSchema,
 } from "./schemas/planoCategoriaSchema";
 import { UpdatePlanoCategoriaController } from "./controllers/planoCategoria/UpdatePlanoCategoriaController";
+import { ListPlanoCategoriaController } from "./controllers/planoCategoria/ListPlanoCategoriaController";
 
 const router: Router = Router();
 
@@ -156,4 +157,11 @@ router.put(
   isAuthenticated,
   validateSchema(updatePlanoCategoriaSchema),
   new UpdatePlanoCategoriaController().handle,
+);
+
+// ? Rota para listar os planos categorias cadastrados
+router.get(
+  "/plano-categoria",
+  isAuthenticated,
+  new ListPlanoCategoriaController().handle,
 );

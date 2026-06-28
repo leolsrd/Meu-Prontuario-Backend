@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,6 +5,135 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model Funcao {
+  idFuncao     String        @id @default(uuid()) @map("id_funcao")
+  nome         String        @default("Admin")
+  status       Boolean       @default(true)
+  descricao    String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  funcionarios Funcionario[]
+
+  @@map("funcoes")
+}
+
+model Funcionario {
+  idFuncionario  String    @id @default(uuid()) @map("id_funcionario")
+  status         Boolean   @default(true)
+  nome           String
+  cpfCnpj        String?   @unique @map("cpf_cnpj") @db.VarChar(14)
+  login          String
+  senha          String
+  telefone       String?
+  dataNascimento DateTime? @map("data_nascimento") @db.Date
+  cep            String?
+  logradouro     String?
+  complemento    String?
+  numero         Int?
+  bairro         String?
+  cidade         String?
+  uf             String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  idFuncao       String    @map("id_funcao")
+  funcao         Funcao    @relation(fields: [idFuncao], references: [idFuncao], onDelete: Cascade)
+  medicos        Medico?
+
+  @@map("funcionarios")
+}
+
+model Medico {
+  idMedico        String          @id @default(uuid()) @map("id_medico")
+  crm             String
+  ufCRM           String          @map("uf_crm")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  idFuncionario   String          @unique @map("id_funcionario")
+  rqe             String?
+  funcionario     Funcionario     @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
+  idEspecialidade Especialidade[] @relation("EspecialidadeToMedico")
+
+  @@unique([crm, ufCRM])
+  @@map("medicos")
+}
+
+model Especialidade {
+  idEspecialidade String   @id @default(uuid()) @map("id_especialidade")
+  nome            String   @unique
+  status Boolean @default(true)
+  medicos         Medico[] @relation("EspecialidadeToMedico")
+
+  @@map("especialidades")
+}
+
+model Paciente {
+  idPaciente      String              @id @default(uuid()) @map("id_paciente")
+  nome            String
+  status          Boolean             @default(true)
+  cpfCnpj         String              @unique @map("cpf_cnpj") @db.VarChar(14)
+  telefone        String?
+  email           String?
+  dataNascimento  DateTime?           @map("data_nascimento") @db.Date
+  sexo            String?
+  cep             String?
+  logradouro      String?
+  complemento     String?
+  numero          Int?
+  bairro          String?
+  cidade          String?
+  uf              String?
+  tipoAtendimento TipoAtendimento     @default(PARTICULAR) @map("tipo_atendimento")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  planoSaude      PacientePlanoSaude?
+
+  @@map("pacientes")
+}
+
+model Operadora {
+  idOperadora String           @id @default(uuid()) @map("id_operadora")
+  nome        String           @unique
+  registroAns String?          @unique @map("registro_ans")
+  status      Boolean          @default(true)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  planos      PlanoCategoria[]
+
+  @@map("operadoras")
+}
+
+model PlanoCategoria {
+  idPlanoCategoria String               @id @default(uuid()) @map("id_plano_categoria")
+  nome             String
+  idOperadora      String               @map("id_operadora")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+  pacientes        PacientePlanoSaude[]
+  operadora        Operadora            @relation(fields: [idOperadora], references: [idOperadora], onDelete: Cascade)
+
+  @@unique([nome, idOperadora])
+  @@map("planos_categorias")
+}
+
+model PacientePlanoSaude {
+  idPacientePlanoSaude String           @id @default(uuid()) @map("id_paciente_plano_saude")
+  idPaciente           String           @unique
+  idPlanoCategoria     String           @map("id_plano_categoria")
+  numeroCarteirinha    String           @map("numero_carteirinha")
+  validade             DateTime?
+  titularidade         TipoTitularidade @default(TITULAR)
+  abrangencia          AbrangenciaPlano @default(NACIONAL)
+  nomeTitular          String?          @map("nome_titular")
+  cpfTitular           String?          @map("cpf_titular")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+  paciente             Paciente         @relation(fields: [idPaciente], references: [idPaciente], onDelete: Cascade)
+  planoCategoria       PlanoCategoria   @relation(fields: [idPlanoCategoria], references: [idPlanoCategoria], onDelete: Cascade)
+
+  @@unique([numeroCarteirinha, idPlanoCategoria])
+  @@map("paciente_planos_saude")
 }
 
 enum TipoAtendimento {
@@ -25,154 +149,4 @@ enum TipoTitularidade {
 enum AbrangenciaPlano {
   NACIONAL
   REGIONAL
-}
-
-model Funcao {
-  idFuncao String @id @default(uuid()) @map("id_funcao")
-  nome String @default("Admin")
-  status Boolean @default(true)
-  descricao String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Prisma gerencia a lista de funcionários nesta função
-  funcionarios Funcionario[]
-
-  // Definindo o nome da tabela
-  @@map("funcoes")
-}
-
-model Funcionario {
-  idFuncionario String @id @default(uuid()) @map("id_funcionario")
-  status Boolean @default(true)
-  nome String
-  cpfCnpj String? @unique @db.VarChar(14) @map("cpf_cnpj")
-  login String
-  senha String
-  telefone String?
-  dataNascimento DateTime? @db.Date @map("data_nascimento")
-  cep String?
-  logradouro String?
-  complemento String?
-  numero Int?
-  bairro String?
-  cidade String?
-  uf String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Criando a chave estrangeira que conecta com a tabela função
-  idFuncao String @map("id_funcao")
-  funcao Funcao @relation(fields: [idFuncao], references: [idFuncao], onDelete: Cascade)
-
-  medicos Medico?
-
-  @@map("funcionarios")
-}
-
-model Medico {
-  idMedico String @id @default(uuid()) @map("id_medico")
-  crm String
-  ufCRM String @map("uf_crm")
-  rqe String? // Opional: Registro de qualificação de especialidade
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  idFuncionario String @unique @map("id_funcionario")
-  funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
-
-  idEspecialidade Especialidade[] // Relação de muitos-para-muitos.
-
-  @@unique([crm, ufCRM])
-  @@map("medicos")
-}
-
-model Especialidade {
-  idEspecialidade String @id @default(uuid()) @map("id_especialidade")
-  nome String @unique
-  medicos Medico[] // Relação de muitos-para-muitos
-
-  @@map("especialidades")
-}
-
-model Paciente {
-  idPaciente String @id @default(uuid()) @map("id_paciente")
-  nome String
-  status Boolean @default(true)
-  cpfCnpj String @unique @db.VarChar(14) @map("cpf_cnpj")
-  telefone String?
-  email String?
-  dataNascimento DateTime? @db.Date @map("data_nascimento")
-  sexo String?
-  cep String?
-  logradouro String?
-  complemento String?
-  numero Int?
-  bairro String?
-  cidade String?
-  uf String?
-
-  tipoAtendimento TipoAtendimento @default(PARTICULAR) @map("tipo_atendimento")
-
-  planoSaude PacientePlanoSaude?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("pacientes")
-}
-
-model Operadora {
-  idOperadora String @id @default(uuid()) @map("id_operadora")
-  nome String @unique // Unimed, Bradesco, Hapvida
-  registroAns String? @unique @map("registro_ans")
-  status Boolean @default(true)
-  planos PlanoCategoria[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("operadoras")
-}
-
-model PlanoCategoria {
-  idPlanoCategoria String @id @default(uuid()) @map("id_plano_categoria")
-  nome String // Básico, Executivo, Delta
-  idOperadora String @map("id_operadora")
-  operadora Operadora @relation(fields: [idOperadora], references: [idOperadora], onDelete: Cascade)
-  pacientes PacientePlanoSaude[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([nome, idOperadora]) // Impede planos duplicados com o mesmo nome na mesma operadora
-  @@map("planos_categorias")
-}
-
-model PacientePlanoSaude {
-  idPacientePlanoSaude String @id @default(uuid()) @map("id_paciente_plano_saude")
-  idPaciente String @unique // Relação 1:1 com Paciente
-  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente], onDelete: Cascade)
-
-  idPlanoCategoria String @map("id_plano_categoria")
-  planoCategoria PlanoCategoria @relation(fields: [idPlanoCategoria], references: [idPlanoCategoria], onDelete: Cascade)
-
-  numeroCarteirinha String @map("numero_carteirinha") // Armazenar apenas caracteres alfanuméricos limpos
-  validade DateTime? // Pode ser nulo se a carteirinha não expirar
-  titularidade TipoTitularidade @default(TITULAR)
-  abrangencia AbrangenciaPlano @default(NACIONAL)
-
-  // Se for dependente, armazena os dados do titular
-  nomeTitular String? @map("nome_titular")
-  cpfTitular String? @map("cpf_titular")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Restrição de unicidade: evita a mesma carteirinha na mesma categoria/operadora
-  @@unique([numeroCarteirinha, idPlanoCategoria])
-  @@map("paciente_planos_saude")
 }

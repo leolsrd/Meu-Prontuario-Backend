@@ -22,10 +22,31 @@ class UpdateOperadoraService {
         return res.status(400).json({ error: "Operadora nao encontrada" });
       }
 
+      const operadoraExistsByNome = await prismaClient.operadora.findFirst({
+        where: {
+          nome: data.nome,
+          idOperadora: {
+            not: data.idOperadora,
+          },
+        },
+      });
+
+      if (operadoraExistsByNome) {
+        return returnError({
+          messageConsole: "Operadora já cadastrada",
+          statusCode: 400,
+          messageApi: "Operadora já cadastrada",
+          res,
+        });
+      }
+
       const operadoraExistsByRegistroAns =
         await prismaClient.operadora.findFirst({
           where: {
             registroAns: data.registroAns,
+            idOperadora: {
+              not: data.idOperadora,
+            },
           },
         });
 

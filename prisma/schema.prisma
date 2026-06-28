@@ -75,8 +75,8 @@ model Funcionario {
 model Medico {
   idMedico String @id @default(uuid()) @map("id_medico")
   crm String
-  especialidade String
   ufCRM String @map("uf_crm")
+  rqe String? // Opional: Registro de qualificação de especialidade
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -84,7 +84,18 @@ model Medico {
   idFuncionario String @unique @map("id_funcionario")
   funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
 
+  idEspecialidade Especialidade[] // Relação de muitos-para-muitos.
+
+  @@unique([crm, ufCRM])
   @@map("medicos")
+}
+
+model Especialidade {
+  idEspecialidade String @id @default(uuid()) @map("id_especialidade")
+  nome String @unique
+  medicos Medico[] // Relação de muitos-para-muitos
+
+  @@map("especialidades")
 }
 
 model Paciente {

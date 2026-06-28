@@ -37,5 +37,6 @@ export const updateOperadoraSchema = z.object({
     status: z.coerce
       .boolean({ message: "O status deve ser true ou false" })
       .optional(),
+    idOperadora: z.uuid({ message: "O id da operadora é obrigatório" }),
   }),
 });

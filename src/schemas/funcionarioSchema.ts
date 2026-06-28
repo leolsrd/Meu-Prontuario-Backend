@@ -152,7 +152,7 @@ export const authFuncinarioSchema = z.object({
 export const updateFuncionarioSchema = z.object({
   body: z
     .object({
-      idFuncionario: z.string(),
+      idFuncionario: z.uuid({ message: "O id do funcionário é obrigatório" }),
       nome: z
         .string()
         .min(3, "O nome deve ter pelo menos 3 caracteres")

@@ -33,6 +33,26 @@ class UpdateMedicoService {
         },
       });
 
+      const funcionarioWithSameLogin = await prismaClient.funcionario.findFirst(
+        {
+          where: {
+            login: data.login,
+            idFuncionario: {
+              not: data.idFuncionario,
+            },
+          },
+        },
+      );
+
+      if (funcionarioWithSameLogin) {
+        return returnError({
+          messageConsole: "Já existe um funcionário cadastrado com este login",
+          statusCode: 400,
+          messageApi: "Já existe um funcionário cadastrado com este login",
+          res,
+        });
+      }
+
       const medico = await tx.medico.update({
         where: {
           // ^ Vai depender do select acima se vai dar certo ou não.

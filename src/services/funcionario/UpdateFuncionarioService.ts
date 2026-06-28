@@ -90,6 +90,24 @@ class UpdateFuncionarioService {
         });
       }
 
+      const loginExists = data.login
+        ? await prismaClient.funcionario.findFirst({
+            where: {
+              login: data.login,
+              idFuncionario: { not: data.idFuncionario },
+            },
+          })
+        : null;
+
+      if (loginExists && data.login) {
+        return returnError({
+          messageConsole: "Login já cadastrado no sistema",
+          statusCode: 400,
+          messageApi: "Login já cadastrado no sistema",
+          res,
+        });
+      }
+
       const result = await prismaClient.$transaction(async (tx) => {
         // * Validação para médicos
         const getFuncaoMedico = await prismaClient.funcao.findFirst({

@@ -29,7 +29,11 @@ import { CreateOperadoraController } from "./controllers/operadora/CreateOperado
 import { ListOperadoraController } from "./controllers/operadora/ListOperadoraController";
 import { UpdateOperadoraController } from "./controllers/operadora/UpdateOperadoraController";
 import { CreatePlanoCategoriaController } from "./controllers/planoCategoria/CreatePlanoCategoriaController";
-import { createPlanoCategoriaSchema } from "./schemas/planoCategoriaSchema";
+import {
+  createPlanoCategoriaSchema,
+  updatePlanoCategoriaSchema,
+} from "./schemas/planoCategoriaSchema";
+import { UpdatePlanoCategoriaController } from "./controllers/planoCategoria/UpdatePlanoCategoriaController";
 
 const router: Router = Router();
 
@@ -144,4 +148,12 @@ router.post(
   isAuthenticated,
   validateSchema(createPlanoCategoriaSchema),
   new CreatePlanoCategoriaController().handle,
+);
+
+// ? Rota para alterar um plano categoria
+router.put(
+  "/plano-categoria/atualizar",
+  isAuthenticated,
+  validateSchema(updatePlanoCategoriaSchema),
+  new UpdatePlanoCategoriaController().handle,
 );

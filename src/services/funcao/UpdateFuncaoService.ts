@@ -25,10 +25,30 @@ class UpdateFuncaoService {
           messageApi: "Função não encontrada",
           res,
         });
+        return;
       }
 
       if (nome === undefined || nome === "") {
         nome = idFuncaoExists?.nome;
+      }
+
+      const funcaoWithSameName = await prismaClient.funcao.findFirst({
+        where: {
+          nome: nome,
+          idFuncao: {
+            not: idFuncao,
+          },
+        },
+      });
+
+      if (funcaoWithSameName) {
+        returnError({
+          messageConsole: "Função já cadastrada",
+          statusCode: 400,
+          messageApi: "Função já cadastrada",
+          res,
+        });
+        return;
       }
 
       if (descricao === undefined || descricao === "") {

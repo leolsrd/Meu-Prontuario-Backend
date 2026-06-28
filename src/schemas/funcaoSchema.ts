@@ -17,7 +17,7 @@ export const createFuncaoSchema = z.object({
 
 export const updateFuncaoSchema = z.object({
   body: z.object({
-    idFuncao: z.string(),
+    idFuncao: z.uuid(),
     nome: z
       .string()
       .min(3, "A função deve ter pelo menos 3 caracteres")

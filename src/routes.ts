@@ -37,6 +37,7 @@ import { UpdatePlanoCategoriaController } from "./controllers/planoCategoria/Upd
 import { ListPlanoCategoriaController } from "./controllers/planoCategoria/ListPlanoCategoriaController";
 import { createEspecialidadeSchema } from "./schemas/especialidadeSchema";
 import { CreateEspecialidadeController } from "./controllers/especialidade/CreateEspecialidadeController";
+import { UpdateEspecialidadeController } from "./controllers/especialidade/UpdateEspecialidadeController";
 
 const router: Router = Router();
 
@@ -175,4 +176,12 @@ router.post(
   isAuthenticated,
   validateSchema(createEspecialidadeSchema),
   new CreateEspecialidadeController().handle,
+);
+
+// ? Rota para atualizar especialidade
+router.put(
+  "/especialidade/atualizar",
+  isAuthenticated,
+  validateSchema(createEspecialidadeSchema),
+  new UpdateEspecialidadeController().handle,
 );

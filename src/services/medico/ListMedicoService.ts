@@ -109,9 +109,13 @@ class ListMedicoService {
     try {
       const medicos = await prismaClient.medico.findMany({
         where: {
-          especialidade: {
-            contains: especialidade,
-            mode: "insensitive",
+          idEspecialidade: {
+            some: {
+              nome: {
+                contains: especialidade,
+                mode: "insensitive",
+              },
+            },
           },
         },
         select: {
@@ -119,7 +123,13 @@ class ListMedicoService {
           idFuncionario: true,
           crm: true,
           ufCRM: true,
-          especialidade: true,
+          idEspecialidade: {
+            select: {
+              idEspecialidade: true,
+              nome: true,
+              status: true,
+            },
+          },
           funcionario: {
             select: {
               idFuncionario: true,

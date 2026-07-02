@@ -1,6 +1,6 @@
 import prismaClient from "../../prisma";
 import { EspecialidadeServiceProps } from "../../@types/especialidade.types";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
+import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 
 class CreateEspecialidadeService {
   async execute(data: EspecialidadeServiceProps) {
@@ -24,21 +24,7 @@ class CreateEspecialidadeService {
       throw new Error("Especialidade já cadastrada");
     }
 
-    // const status =
-    //   data.status === undefined
-    //     ? true
-    //     : typeof data.status === "string"
-    //       ? (() => {
-    //           const normalizedStatus = data.status.trim().toLowerCase();
-
-    //           if (normalizedStatus === "true") return true;
-    //           if (normalizedStatus === "false") return false;
-
-    //           throw new Error("O campo status deve ser 'true' ou 'false'");
-    //         })()
-    //       : data.status;
-
-    const status = checkBoooleanStringConvertInBoolean(data.status);
+    const status = parseStatusCreate(data.status);
 
     const especialidade = await prismaClient.especialidade.create({
       data: {

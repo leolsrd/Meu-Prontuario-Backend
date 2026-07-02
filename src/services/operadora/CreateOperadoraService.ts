@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import prismaClient from "../../prisma";
 import { returnError } from "../../utils/returnError";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import { OperadoraServiceProps } from "../../@types/operadora.types";
+import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 
 class CreateOperadoraService {
   async execute(req: Request, res: Response, data: OperadoraServiceProps) {
@@ -54,7 +54,7 @@ class CreateOperadoraService {
       if (!data.status) data.status = true;
 
       if (typeof data.status === "string") {
-        data.status = checkBoooleanStringConvertInBoolean(data.status);
+        data.status = parseStatusCreate(data.status);
       }
 
       const operadora = await prismaClient.operadora.create({

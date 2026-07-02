@@ -2,29 +2,25 @@ import prismaClient from "../../prisma";
 
 class ListFuncaoService {
   async execute() {
-    try {
-      const funcoes = await prismaClient.funcao.findMany({
-        select: {
-          idFuncao: true,
-          nome: true,
-          descricao: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-        orderBy: {
-          nome: "asc",
-        },
-      });
+    const funcoes = await prismaClient.funcao.findMany({
+      select: {
+        idFuncao: true,
+        nome: true,
+        descricao: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        nome: "asc",
+      },
+    });
 
-      if (!funcoes) {
-        throw new Error("Nenhuma função encontrada");
-      }
-
-      return funcoes;
-    } catch (error) {
-      throw new Error("Falha ao buscar as funções ", { cause: error });
+    if (!funcoes) {
+      throw new Error("Nenhuma função encontrada");
     }
+
+    return funcoes;
   }
 }
 

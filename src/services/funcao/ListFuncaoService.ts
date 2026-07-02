@@ -1,4 +1,3 @@
-// import prisma from "../../prisma";
 import prismaClient from "../../prisma";
 
 class ListFuncaoService {
@@ -17,6 +16,10 @@ class ListFuncaoService {
           nome: "asc",
         },
       });
+
+      if (!funcoes) {
+        throw new Error("Nenhuma função encontrada");
+      }
 
       return funcoes;
     } catch (error) {

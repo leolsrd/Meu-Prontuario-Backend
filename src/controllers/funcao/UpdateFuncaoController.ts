@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import UpdateFuncaoService from "../../services/funcao/UpdateFuncaoService";
 
 class UpdateFuncaoController {
@@ -8,14 +8,17 @@ class UpdateFuncaoController {
 
       const updateFuncaoService = new UpdateFuncaoService();
 
-      const updateFuncao = await updateFuncaoService.execute(req, res, {
+      const updateFuncao = await updateFuncaoService.execute({
         idFuncao,
         status,
         nome,
         descricao,
       });
 
-      return res.status(200).json(updateFuncao);
+      return res.status(200).json({
+        message: "Funcao atualizada com sucesso",
+        updateFuncao,
+      });
     } catch (error) {
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });

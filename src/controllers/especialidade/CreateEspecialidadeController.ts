@@ -8,16 +8,18 @@ class CreateEspecialidadeController {
 
       const createEspecialidadeService = new CreateEspecialidadeService();
 
-      const especialidade = await createEspecialidadeService.execute(
-        req,
-        res,
-        data,
-      );
+      const especialidade = await createEspecialidadeService.execute(data);
 
-      return res.status(201).json(especialidade);
+      return res.status(201).json({
+        message: "Especialidade criada com sucesso",
+        especialidade,
+      });
     } catch (error) {
-      if (error instanceof Error)
+      if (error instanceof Error) {
         return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 }

@@ -1,7 +1,6 @@
 import { CreateFuncaoServiceProps } from "../../@types/funcao.types";
 import prismaClient from "../../prisma";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
-import { returnError } from "../../utils/returnError";
+import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 
 class CreateFuncaoService {
@@ -40,7 +39,7 @@ class CreateFuncaoService {
       throw new Error("Função já cadastrada, mas está inativa");
     }
 
-    const status = checkBoooleanStringConvertInBoolean(data.status);
+    const status = parseStatusCreate(data.status);
 
     const funcao = await prismaClient.funcao.create({
       data: {

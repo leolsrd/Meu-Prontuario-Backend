@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import prismaClient from "../../prisma";
 import { hash } from "bcryptjs";
 import removeMascaraDevolveNumero from "../../utils/removeMascara.utils";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 import { returnError } from "../../utils/returnError";
 import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
+import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 
 class CreateFuncionarioService {
   async execute(
@@ -69,9 +69,7 @@ class CreateFuncionarioService {
         telefone = StringVaziaOrUndefinedSetNull(telefone!);
       }
 
-      if (typeof status === "string") {
-        status = checkBoooleanStringConvertInBoolean(status);
-      }
+      status = parseStatusCreate(status);
 
       if (cep) {
         cep = removeMascaraDevolveNumero(cep);

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prismaClient from "../../prisma";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import { returnError } from "../../utils/returnError";
+import { parse } from "node:path";
 
 class UpdateOperadoraService {
   async execute(req: Request, res: Response, data: any) {
@@ -15,7 +15,7 @@ class UpdateOperadoraService {
       data.registroAns = data.registroAns?.toString();
 
       if (typeof data.status === "string") {
-        data.status = checkBoooleanStringConvertInBoolean(data.status);
+        data.status = parse(data.status);
       }
 
       if (!operadoraExists) {

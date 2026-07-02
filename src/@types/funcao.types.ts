@@ -7,7 +7,7 @@ export interface CreateFuncaoServiceProps {
 
 export interface UpdateFuncaoServiceProps {
   idFuncao: string;
-  status?: boolean;
+  status?: boolean | string;
   nome?: string;
   descricao?: string | null;
 }

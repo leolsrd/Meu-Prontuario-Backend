@@ -1,6 +1,6 @@
 import prismaClient from "../../prisma";
 import { EspecialidadeServiceProps } from "../../@types/especialidade.types";
-import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
+import { parseStatusUpdate } from "../../utils/parseBoolean.utils";
 
 class UpdateEspecialidadeService {
   async execute(data: EspecialidadeServiceProps) {
@@ -24,16 +24,20 @@ class UpdateEspecialidadeService {
       throw new Error("Especialidade não encontrada");
     }
 
-    const especialidadeWithSameName = await prismaClient.especialidade.findFirst({
-      where: {
-        nome,
-        idEspecialidade: {
-          not: data.idEspecialidade,
+    const especialidadeWithSameName =
+      await prismaClient.especialidade.findFirst({
+        where: {
+          nome,
+          idEspecialidade: {
+            not: data.idEspecialidade,
+          },
         },
-      },
-    });
+      });
 
-    if (especialidadeWithSameName && especialidadeWithSameName?.status === false) {
+    if (
+      especialidadeWithSameName &&
+      especialidadeWithSameName?.status === false
+    ) {
       throw new Error("Especialidade já cadastrada, mas está inativa");
     }
 
@@ -41,12 +45,7 @@ class UpdateEspecialidadeService {
       throw new Error("Especialidade já cadastrada");
     }
 
-    const status =
-      data.status === undefined
-        ? true
-        : typeof data.status === "string"
-          ? checkBoooleanStringConvertInBoolean(data.status)
-          : data.status;
+    const status = parseStatusUpdate(data.status);
 
     try {
       const especialidade = await prismaClient.especialidade.update({

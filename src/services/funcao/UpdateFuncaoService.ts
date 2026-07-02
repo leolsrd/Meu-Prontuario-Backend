@@ -1,16 +1,15 @@
-import { Request, Response } from "express";
 import prismaClient from "../../prisma";
-import { returnError } from "../../utils/returnError";
 import { UpdateFuncaoServiceProps } from "../../@types/funcao.types";
 import checkBoooleanStringConvertInBoolean from "../../utils/checkBooleanString.utils";
 import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 
 class UpdateFuncaoService {
-  async execute(
-    req: Request,
-    res: Response,
-    { idFuncao, status, nome, descricao }: UpdateFuncaoServiceProps,
-  ) {
+  async execute({
+    idFuncao,
+    status,
+    nome,
+    descricao,
+  }: UpdateFuncaoServiceProps) {
     try {
       const idFuncaoExists = await prismaClient.funcao.findFirst({
         where: {
@@ -19,13 +18,7 @@ class UpdateFuncaoService {
       });
 
       if (!idFuncaoExists) {
-        returnError({
-          messageConsole: "Função não encontrada",
-          statusCode: 400,
-          messageApi: "Função não encontrada",
-          res,
-        });
-        return;
+        throw new Error("Função nao encontrada");
       }
 
       if (nome === undefined || nome === "") {
@@ -42,13 +35,7 @@ class UpdateFuncaoService {
       });
 
       if (funcaoWithSameName) {
-        returnError({
-          messageConsole: "Função já cadastrada",
-          statusCode: 400,
-          messageApi: "Função já cadastrada",
-          res,
-        });
-        return;
+        throw new Error("Funcao com mesmo nome ja cadastrada");
       }
 
       if (descricao === undefined || descricao === "") {

@@ -1,5 +1,6 @@
 export interface OperadoraServiceProps {
+  idOperadora?: string;
   nome: string;
-  registroAns?: string;
-  status?: boolean;
+  registroAns?: number;
+  status?: boolean | string;
 }

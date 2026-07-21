@@ -1,29 +1,44 @@
-import { Request, Response } from "express";
 import prismaClient from "../../prisma";
+import { parseStatusUpdate } from "../../utils/parseBoolean.utils";
 
 class ListOperadoraService {
-  async listOperadoraStatus(req: Request, res: Response, status: boolean) {
-    try {
-      const operadoras = await prismaClient.operadora.findMany({
-        where: {
-          status: status,
-        },
-        select: {
-          idOperadora: true,
-          nome: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-        orderBy: {
-          nome: "asc",
-        },
-      });
+  async listOperadoraStatus(status: boolean) {
+    const statusValid = parseStatusUpdate(status);
 
-      return operadoras;
-    } catch (error) {
-      throw new Error("Falha ao buscar as operadoras ", { cause: error });
-    }
+    const operadoras = await prismaClient.operadora.findMany({
+      where: {
+        status: statusValid,
+      },
+      select: {
+        idOperadora: true,
+        nome: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        nome: "asc",
+      },
+    });
+
+    return operadoras;
+  }
+
+  async listOperadoraAll() {
+    const operadoras = await prismaClient.operadora.findMany({
+      select: {
+        idOperadora: true,
+        nome: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        nome: "asc",
+      },
+    });
+
+    return operadoras;
   }
 }
 

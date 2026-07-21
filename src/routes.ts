@@ -130,11 +130,18 @@ router.post(
   new CreateOperadoraController().handle,
 );
 
-// ? Rota para listar operadoras
+// ? Rota para listar operadoras por status
 router.get(
   "/operadoras/status",
   isAuthenticated,
   new ListOperadoraController().listOperadoraStatus,
+);
+
+// ? Rota para listar todas operadoras
+router.get(
+  "/operadoras",
+  isAuthenticated,
+  new ListOperadoraController().listOperadoraAll,
 );
 
 // ? Rota para atualizar operadoras

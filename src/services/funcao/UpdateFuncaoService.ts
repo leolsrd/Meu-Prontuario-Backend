@@ -25,7 +25,7 @@ class UpdateFuncaoService {
     });
 
     if (!idFuncaoExists) {
-      throw new Error("Função nao encontrada");
+      throw new Error("Função não encontrada");
     }
 
     const nomeFuncaoExists = await prismaClient.funcao.findFirst({

@@ -1,5 +1,5 @@
-import prismaClient from "../../prisma";
 import { OperadoraServiceProps } from "../../@types/operadora.types";
+import prismaClient from "../../prisma";
 import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 
 class CreateOperadoraService {

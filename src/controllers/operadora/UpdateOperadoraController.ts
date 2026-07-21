@@ -7,15 +7,18 @@ class UpdateOperadoraController {
       const data = req.body;
 
       const updateOperadoraService = new UpdateOperadoraService();
-      const operadoraUpdate = await updateOperadoraService.execute(
-        req,
-        res,
-        data,
-      );
-      return res.json(operadoraUpdate);
+
+      const operadoraUpdate = await updateOperadoraService.execute(data);
+
+      return res.status(200).json({
+        message: "Operadora atualizada com sucesso",
+        operadoraUpdate,
+      });
     } catch (error) {
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 }

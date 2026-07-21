@@ -1,8 +1,6 @@
 import { OperadoraServiceProps } from "../../@types/operadora.types";
 import prismaClient from "../../prisma";
 import { parseStatusUpdate } from "../../utils/parseBoolean.utils";
-import { returnError } from "../../utils/returnError";
-import { parse } from "node:path";
 
 class UpdateOperadoraService {
   async execute(data: OperadoraServiceProps) {

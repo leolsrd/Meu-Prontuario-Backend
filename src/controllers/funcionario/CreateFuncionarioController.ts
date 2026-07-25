@@ -8,16 +8,17 @@ class CreateFuncionarioController {
 
       const createFuncionarioService = new CreateFuncionarioService();
 
-      const funcionario = await createFuncionarioService.execute(
-        req,
-        res,
-        data,
-      );
+      const funcionario = await createFuncionarioService.execute(data);
 
-      return res.status(201).json(funcionario);
+      return res.status(201).json({
+        message: "Funcionario criado com sucesso",
+        funcionario,
+      });
     } catch (error) {
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 }

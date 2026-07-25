@@ -17,7 +17,7 @@ export const createFuncionarioSchema = z.object({
         .optional(),
       senha: z
         .string()
-        .min(4, { message: "A senha deve ter pelo menos 8 caracteres" })
+        .min(4, { message: "A senha deve ter pelo menos 4 caracteres" })
         .trim()
         .optional(),
       telefone: z

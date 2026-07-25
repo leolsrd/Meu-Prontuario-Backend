@@ -1,8 +1,10 @@
-const StringVaziaOrUndefinedSetNull = (val: string | null | undefined) => {
-  if (val?.trim() === "" || val?.trim() === undefined) {
+const StringVaziaOrUndefinedSetNull = (
+  val: string | null | undefined,
+): string | null => {
+  if (val?.trim() === "" || val === undefined || val === null) {
     return null;
   }
-  return val.trim();
+  return val;
 };
 
 export { StringVaziaOrUndefinedSetNull };

@@ -27,29 +27,24 @@ export const createFuncionarioSchema = z.object({
         .default(""),
       dataNascimento: z
         .string()
-        .refine((val) => !isNaN(Date.parse(val)), {
-          message: "Data inválida, formato esperado: YYYY-MM-DD",
-        })
-        .transform((val) => new Date(val))
-        .refine((date) => date <= new Date(), {
-          message: "A data de nascimento não pode ser no futuro.",
-        })
         .refine(
-          (date) => {
-            const today = new Date();
-            const age = today.getFullYear() - date.getFullYear();
-            const monthDifference = today.getMonth() - date.getMonth();
+          (val) => {
+            const dataInput = new Date(val);
 
-            if (
-              monthDifference < 0 ||
-              (monthDifference === 0 && today.getDate() < date.getDate())
-            ) {
-              return age - 1 >= 18;
-            }
-            return age >= 18;
+            if (isNaN(dataInput.getTime())) return false;
+
+            const [ano, mes, dia] = val.split("-").map(Number);
+            const dataExiste =
+              dataInput.getUTCFullYear() === ano &&
+              dataInput.getUTCMonth() + 1 === mes &&
+              dataInput.getUTCDate() === dia;
+
+            const naoENoFuturo = dataInput.getTime() <= new Date().getTime();
+
+            return dataExiste && naoENoFuturo;
           },
           {
-            message: "Você deve ter pelo menos 18 anos.",
+            message: "A data deve ser válida e não pode estar no futuro.",
           },
         )
         .optional(),

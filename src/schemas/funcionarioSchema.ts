@@ -170,7 +170,7 @@ export const updateFuncionarioSchema = z.object({
         .optional(),
       senha: z
         .string()
-        .min(4, { message: "A senha deve ter pelo menos 8 caracteres" })
+        .min(4, { message: "A senha deve ter pelo menos 4 caracteres" })
         .trim()
         .optional(),
       telefone: z
@@ -217,28 +217,29 @@ export const updateFuncionarioSchema = z.object({
       logradouro: z
         .string()
         .min(3, { message: "O logradouro deve ter pelo menos 3 caracteres" })
-        .optional()
-        .default("Não Informado"),
+        .or(z.literal(""))
+        .optional(),
       complemento: z
         .string()
         .min(3, { message: "O complemento deve ter pelo menos 3 caracteres" })
-        .optional()
-        .default("Não Informado"),
+        .or(z.literal(""))
+        .optional(),
       numero: z.number().optional().default(0),
       bairro: z
         .string({ error: "Bairro não é String" })
         .min(3, { message: "O bairro deve ter pelo menos 3 caracteres" })
-        .optional()
-        .default("Não Informado"),
+        .or(z.literal(""))
+        .optional(),
       cidade: z
         .string()
         .min(3, { message: "A cidade deve ter pelo menos 3 caracteres" })
-        .optional()
-        .default("Não Informado"),
+        .or(z.literal(""))
+        .optional(),
       uf: z
         .string()
         .min(2, { message: "A UF deve ter pelo menos 2 caracteres" })
         .max(2, { message: "A UF deve ter pelo menos 2 caracteres" })
+        .or(z.literal(""))
         .optional()
         .default("NI"),
       idFuncao: z.string().optional(),

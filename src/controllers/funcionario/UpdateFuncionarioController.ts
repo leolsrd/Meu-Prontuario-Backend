@@ -3,13 +3,20 @@ import { UpdateFuncionarioService } from "../../services/funcionario/UpdateFunci
 
 class UpdateFuncionarioController {
   async handle(req: Request, res: Response) {
-    const data = req.body;
+    try {
+      const data = req.body;
 
-    const updateFuncionarioService = new UpdateFuncionarioService();
+      const updateFuncionarioService = new UpdateFuncionarioService();
 
-    const funcionario = await updateFuncionarioService.execute(res, req, data);
+      const funcionario = await updateFuncionarioService.execute(data);
 
-    return res.status(200).json(funcionario);
+      return res.status(200).json(funcionario);
+    } catch (error) {
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
   }
 }
 

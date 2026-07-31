@@ -4,7 +4,7 @@ const StringVaziaOrUndefinedSetNull = (
   if (val?.trim() === "" || val === undefined || val === null) {
     return null;
   }
-  return val;
+  return val?.trim();
 };
 
 export { StringVaziaOrUndefinedSetNull };

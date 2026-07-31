@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import funcionarioRoutes from "./funcioario.routes";
+import funcaoRoutes from "./funcao.routes";
 
 const globalRouter: Router = Router();
 
@@ -10,5 +11,6 @@ globalRouter.get("/teste", (req: Request, res: Response) => {
 
 // Agrupamento por prefixos
 globalRouter.use("/funcionario", funcionarioRoutes);
+globalRouter.use("/funcao", funcaoRoutes);
 
 export default globalRouter;

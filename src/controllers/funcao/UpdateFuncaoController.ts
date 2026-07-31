@@ -4,7 +4,9 @@ import UpdateFuncaoService from "../../services/funcao/UpdateFuncaoService";
 class UpdateFuncaoController {
   async handle(req: Request, res: Response) {
     try {
+      const idFuncao = req.params.id;
       const data = req.body;
+      data.idFuncao = idFuncao;
 
       const updateFuncaoService = new UpdateFuncaoService();
 

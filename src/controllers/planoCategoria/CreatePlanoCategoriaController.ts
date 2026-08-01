@@ -3,13 +3,20 @@ import { CreatePlanoCategoriaService } from "../../services/planoCategoria/Creat
 
 class CreatePlanoCategoriaController {
   async handle(req: Request, res: Response) {
-    const data = req.body;
+    try {
+      const data = req.body;
 
-    const planoCategoriaService = new CreatePlanoCategoriaService();
+      const planoCategoriaService = new CreatePlanoCategoriaService();
 
-    const planoCategoria = await planoCategoriaService.execute(req, res, data);
+      const planoCategoria = await planoCategoriaService.execute(data);
 
-    return res.status(201).json(planoCategoria);
+      return res.status(201).json(planoCategoria);
+    } catch (error) {
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
   }
 }
 

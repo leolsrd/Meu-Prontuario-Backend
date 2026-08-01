@@ -4,7 +4,9 @@ import { UpdateOperadoraService } from "../../services/operadora/UpdateOperadora
 class UpdateOperadoraController {
   async handle(req: Request, res: Response) {
     try {
+      const idOperadora = req.params.id;
       const data = req.body;
+      data.idOperadora = idOperadora;
 
       const updateOperadoraService = new UpdateOperadoraService();
 

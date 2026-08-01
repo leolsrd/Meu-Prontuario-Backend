@@ -1,39 +1,38 @@
-import { Request, Response } from "express";
 import prismaClient from "../../prisma";
 import { PlanoCategoriaServiceProps } from "../../@types/planoCategoria.types";
-import { returnError } from "../../utils/returnError";
 
 class CreatePlanoCategoriaService {
-  async execute(req: Request, res: Response, data: PlanoCategoriaServiceProps) {
-    try {
-      const operadoraForIdOperadoraExists =
-        await prismaClient.planoCategoria.findFirst({
-          where: {
-            nome: data.nome,
-            idOperadora: data.idOperadora,
-          },
-        });
+  async execute(data: PlanoCategoriaServiceProps) {
+    let nome = data.nome?.trim();
+    let idOperadora = data.idOperadora?.trim();
 
-      if (operadoraForIdOperadoraExists) {
-        returnError({
-          messageConsole: "Plano Categoria ja cadastrada para essa operadora",
-          statusCode: 400,
-          messageApi: "Plano Categoria ja cadastrada para essa operadora",
-          res,
-        });
-      }
+    if (!nome) {
+      throw new Error("O nome da plano categoria é obrigatório");
+    }
 
-      const planoCategoria = await prismaClient.planoCategoria.create({
-        data: {
-          ...data,
+    if (!idOperadora) {
+      throw new Error("O id da operadora é obrigatório");
+    }
+
+    const operadoraForIdOperadoraExists =
+      await prismaClient.planoCategoria.findFirst({
+        where: {
+          nome: data.nome,
+          idOperadora: data.idOperadora,
         },
       });
 
-      return planoCategoria;
-    } catch (error) {
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
+    if (operadoraForIdOperadoraExists) {
+      throw new Error("Plano Categoria já cadastrada para essa operadora");
     }
+
+    const planoCategoria = await prismaClient.planoCategoria.create({
+      data: {
+        ...data,
+      },
+    });
+
+    return planoCategoria;
   }
 }
 

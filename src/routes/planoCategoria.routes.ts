@@ -21,7 +21,7 @@ planoCategoriaRoutes.post(
 
 // ? Rota para alterar um plano categoria
 planoCategoriaRoutes.put(
-  "/plano-categoria/atualizar",
+  "/:id",
   isAuthenticated,
   validateSchema(updatePlanoCategoriaSchema),
   new UpdatePlanoCategoriaController().handle,

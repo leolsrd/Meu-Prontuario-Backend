@@ -3,11 +3,18 @@ import { ListPlanoCategoriaService } from "../../services/planoCategoria/ListPla
 
 class ListPlanoCategoriaController {
   async handle(req: Request, res: Response) {
-    const listPlanoCategoriaService = new ListPlanoCategoriaService();
+    try {
+      const listPlanoCategoriaService = new ListPlanoCategoriaService();
 
-    const planoCategorias = await listPlanoCategoriaService.execute(req, res);
+      const planoCategorias = await listPlanoCategoriaService.execute(req, res);
 
-    return res.status(200).json(planoCategorias);
+      return res.status(200).json(planoCategorias);
+    } catch (error) {
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
   }
 }
 

@@ -29,7 +29,7 @@ planoCategoriaRoutes.put(
 
 // ? Rota para listar os planos categorias cadastrados
 planoCategoriaRoutes.get(
-  "/plano-categoria",
+  "/",
   isAuthenticated,
   new ListPlanoCategoriaController().handle,
 );

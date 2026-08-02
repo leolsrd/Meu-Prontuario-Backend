@@ -6,7 +6,7 @@ class ListPlanoCategoriaController {
     try {
       const listPlanoCategoriaService = new ListPlanoCategoriaService();
 
-      const planoCategorias = await listPlanoCategoriaService.execute(req, res);
+      const planoCategorias = await listPlanoCategoriaService.execute();
 
       return res.status(200).json(planoCategorias);
     } catch (error) {

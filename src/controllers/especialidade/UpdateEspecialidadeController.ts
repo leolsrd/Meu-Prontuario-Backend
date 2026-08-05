@@ -4,7 +4,9 @@ import { UpdateEspecialidadeService } from "../../services/especialidade/UpdateE
 class UpdateEspecialidadeController {
   async handle(req: Request, res: Response) {
     try {
+      const idEspecialidade = req.params.id;
       const data = req.body;
+      data.idEspecialidade = idEspecialidade;
 
       const updateEspecialidadeService = new UpdateEspecialidadeService();
 
@@ -17,6 +19,9 @@ class UpdateEspecialidadeController {
     } catch (error) {
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });
+
+      if (error instanceof Error)
+        return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 }

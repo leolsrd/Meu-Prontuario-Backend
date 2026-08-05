@@ -5,6 +5,7 @@ import funcaoRoutes from "./funcao.routes";
 import operadoraRoutes from "./operadora.routes";
 import planoCategoriaRoutes from "./planoCategoria.routes";
 import medicoRoutes from "./medico.routes";
+import especialidadeRoutes from "./especialidade.routes";
 
 const globalRouter: Router = Router();
 
@@ -18,5 +19,6 @@ globalRouter.use("/funcao", funcaoRoutes);
 globalRouter.use("/operadora", operadoraRoutes);
 globalRouter.use("/plano-categoria", planoCategoriaRoutes);
 globalRouter.use("/medico", medicoRoutes);
+globalRouter.use("/especialidade", especialidadeRoutes);
 
 export default globalRouter;

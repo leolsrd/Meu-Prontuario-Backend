@@ -6,7 +6,7 @@ export interface CreateFuncionarioServiceProps {
   cpfCnpj?: string | null;
   senha: string;
   telefone?: string | null;
-  dataNascimento?: Date;
+  dataNascimento?: string | null | Date;
   cep?: string | null;
   logradouro?: string | null;
   complemento?: string | null;

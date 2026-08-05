@@ -20,8 +20,7 @@ class UpdateEspecialidadeController {
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });
 
-      if (error instanceof Error)
-        return res.status(500).json({ error: "Erro interno do servidor" });
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 }

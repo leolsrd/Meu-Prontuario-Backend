@@ -28,8 +28,8 @@ class CreateEspecialidadeService {
 
     const especialidade = await prismaClient.especialidade.create({
       data: {
-        nome,
-        status,
+        nome: nome,
+        status: status,
       },
     });
 

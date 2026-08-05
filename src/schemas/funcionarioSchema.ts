@@ -88,15 +88,6 @@ export const createFuncionarioSchema = z.object({
         .optional()
         .default("")
         .or(z.literal("")),
-      especialidade: z
-        .string()
-        .min(6, { message: "A especialidade deve ter pelo menos 3 caracteres" })
-        .max(40, {
-          message: "A especialidade deve ter no máximo A40 caracteres",
-        })
-        .optional()
-        .default("")
-        .or(z.literal("")),
       ufCRM: z
         .string()
         .min(2, { message: "A UF/CRM deve ter pelo menos 2 caracteres" })
@@ -107,26 +98,26 @@ export const createFuncionarioSchema = z.object({
     })
     .refine(
       (data) => {
-        if (data.crm && !data.especialidade && !data.ufCRM) {
+        if (data.crm && !data.ufCRM) {
           return false;
-        } else if (data.crm && data.especialidade && !data.ufCRM) {
+        } else if (data.crm && !data.ufCRM) {
           return false;
-        } else if (data.crm && !data.especialidade && data.ufCRM) {
+        } else if (data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && !data.especialidade && data.ufCRM) {
+        } else if (!data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && data.especialidade && data.ufCRM) {
+        } else if (!data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && data.especialidade && !data.ufCRM) {
+        } else if (!data.crm && !data.ufCRM) {
           return false;
-        } else if (!data.crm && !data.especialidade && !data.ufCRM) {
+        } else if (!data.crm && !data.ufCRM) {
           return true;
         }
         return true;
       },
       {
-        error: "O CRM, especialidade e UF/CRM devem ser informados juntos",
-        path: ["crm", "especialidade", "ufCRM"],
+        error: "O CRM e UF/CRM devem ser informados juntos",
+        path: ["crm", "ufCRM"],
       },
     ),
 });
@@ -250,15 +241,6 @@ export const updateFuncionarioSchema = z.object({
         .optional()
         .default("")
         .or(z.literal("")),
-      especialidade: z
-        .string()
-        .min(6, { message: "A especialidade deve ter pelo menos 3 caracteres" })
-        .max(40, {
-          message: "A especialidade deve ter no máximo A40 caracteres",
-        })
-        .optional()
-        .default("")
-        .or(z.literal("")),
       ufCRM: z
         .string()
         .min(2, { message: "A UF/CRM deve ter pelo menos 2 caracteres" })
@@ -269,26 +251,26 @@ export const updateFuncionarioSchema = z.object({
     })
     .refine(
       (data) => {
-        if (data.crm && !data.especialidade && !data.ufCRM) {
+        if (data.crm && !data.ufCRM) {
           return false;
-        } else if (data.crm && data.especialidade && !data.ufCRM) {
+        } else if (data.crm && !data.ufCRM) {
           return false;
-        } else if (data.crm && !data.especialidade && data.ufCRM) {
+        } else if (data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && !data.especialidade && data.ufCRM) {
+        } else if (!data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && data.especialidade && data.ufCRM) {
+        } else if (!data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && data.especialidade && !data.ufCRM) {
+        } else if (!data.crm && !data.ufCRM) {
           return false;
-        } else if (!data.crm && !data.especialidade && !data.ufCRM) {
+        } else if (!data.crm && !data.ufCRM) {
           return true;
         }
         return true;
       },
       {
-        error: "O CRM, especialidade e UF/CRM devem ser informados juntos",
-        path: ["crm", "especialidade", "ufCRM"],
+        error: "O CRM, e UF/CRM devem ser informados juntos",
+        path: ["crm", "ufCRM"],
       },
     ),
 });

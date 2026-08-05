@@ -31,3 +31,9 @@ export const upadteEspecialidadeSchema = z.object({
   params: updateParamsSchemas,
   body: updateBodySchemas,
 });
+
+export const listEspecialidadeStatus = z.object({
+  params: z.object({
+    status: z.coerce.boolean({ message: "O status deve ser true ou false" }),
+  }),
+});

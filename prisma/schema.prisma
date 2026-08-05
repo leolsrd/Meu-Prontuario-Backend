@@ -9,7 +9,7 @@ datasource db {
 
 model Funcao {
   idFuncao     String        @id @default(uuid()) @map("id_funcao")
-  nome         String        @default("Admin")
+  nome         String        @default("Admin") @unique
   status       Boolean       @default(true)
   descricao    String?
   createdAt    DateTime      @default(now()) @map("created_at")
@@ -24,7 +24,7 @@ model Funcionario {
   status         Boolean   @default(true)
   nome           String
   cpfCnpj        String?   @unique @map("cpf_cnpj") @db.VarChar(14)
-  login          String
+  login          String    @unique
   senha          String
   telefone       String?
   dataNascimento DateTime? @map("data_nascimento") @db.Date

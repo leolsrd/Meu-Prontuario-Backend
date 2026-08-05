@@ -45,14 +45,14 @@ model Funcionario {
 }
 
 model Medico {
-  idMedico        String          @id @default(uuid()) @map("id_medico")
-  crm             String
-  ufCRM           String          @map("uf_crm")
-  idFuncionario   String          @unique @map("id_funcionario")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
+  idMedico      String   @id @default(uuid()) @map("id_medico")
+  crm           String
+  ufCRM         String   @map("uf_crm")
+  idFuncionario String   @unique @map("id_funcionario")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  funcionario     Funcionario     @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
+  funcionario Funcionario @relation(fields: [idFuncionario], references: [idFuncionario], onDelete: Cascade)
 
   // Nova relação explícita com a tabela intermediário (MedicoEspecialidades)
   medicoEspecialidade MedicoEspecialidade[]
@@ -64,9 +64,9 @@ model Medico {
 model Especialidade {
   idEspecialidade String   @id @default(uuid()) @map("id_especialidade")
   nome            String   @unique
-  status Boolean @default(true)
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
+  status          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Nova relação explícita com a tabela intermediário (MedicoEspecialidades)
   medicoEspecialidades MedicoEspecialidade[]
@@ -75,13 +75,13 @@ model Especialidade {
 }
 
 model MedicoEspecialidade {
-  idMedico String @map("id_medico")
-  idEspecialidade String @map("id_especialidade")
-  rqe String? //
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
+  idMedico        String   @map("id_medico")
+  idEspecialidade String   @map("id_especialidade")
+  rqe             String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
-  medico Medico @relation(fields: [idMedico], references: [idMedico], onDelete: Cascade)
+  medico        Medico        @relation(fields: [idMedico], references: [idMedico], onDelete: Cascade)
   especialidade Especialidade @relation(fields: [idEspecialidade], references: [idEspecialidade], onDelete: Cascade)
 
   @@id([idMedico, idEspecialidade])

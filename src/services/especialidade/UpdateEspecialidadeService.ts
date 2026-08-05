@@ -4,14 +4,12 @@ import { parseStatusUpdate } from "../../utils/parseBoolean.utils";
 
 class UpdateEspecialidadeService {
   async execute(data: EspecialidadeServiceProps) {
-    const nome = data.nome?.trim();
-
     if (!data.idEspecialidade) {
       throw new Error("O id da especialidade é obrigatório");
     }
 
-    if (!nome) {
-      throw new Error("O nome da especialidade é obrigatório");
+    if (data.status !== undefined && data.status === "") {
+      throw new Error("O status da especialidade não pode ser vazio");
     }
 
     const especialidadeExists = await prismaClient.especialidade.findUnique({
@@ -23,6 +21,13 @@ class UpdateEspecialidadeService {
     if (!especialidadeExists) {
       throw new Error("Especialidade não encontrada");
     }
+
+    if (data.nome !== undefined && data.nome === "") {
+      throw new Error("O nome da especialidade é obrigatório");
+    }
+
+    const nome = data.nome?.trim();
+    const status = parseStatusUpdate(data.status);
 
     const especialidadeWithSameName =
       await prismaClient.especialidade.findFirst({
@@ -44,8 +49,6 @@ class UpdateEspecialidadeService {
     if (especialidadeWithSameName) {
       throw new Error("Especialidade já cadastrada");
     }
-
-    const status = parseStatusUpdate(data.status);
 
     try {
       const especialidade = await prismaClient.especialidade.update({

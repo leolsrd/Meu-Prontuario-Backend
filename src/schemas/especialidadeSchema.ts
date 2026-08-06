@@ -37,3 +37,13 @@ export const listEspecialidadeStatus = z.object({
     status: z.coerce.boolean({ message: "O status deve ser true ou false" }),
   }),
 });
+
+export const listEspecialidadeByName = z.object({
+  query: z.object({
+    search: z
+      .string()
+      .trim()
+      .min(3, "A especialidade deve ter pelo menos 3 caracteres")
+      .max(50, "A especialidade deve ter no máximo 40 caracteres"),
+  }),
+});

@@ -6,6 +6,7 @@ import { UpdateEspecialidadeController } from "../controllers/especialidade/Upda
 import ListEspecialidadeController from "../controllers/especialidade/ListEspecialidadeController";
 import {
   createEspecialidadeSchema,
+  listEspecialidadeByName,
   listEspecialidadeStatus,
   upadteEspecialidadeSchema,
 } from "../schemas/especialidadeSchema";
@@ -30,6 +31,13 @@ especialidadeRoutes.get(
   "/",
   isAuthenticated,
   new ListEspecialidadeController().getAll,
+);
+
+especialidadeRoutes.get(
+  "/name",
+  isAuthenticated,
+  validateSchema(listEspecialidadeByName),
+  new ListEspecialidadeController().getEspecialidadeByName,
 );
 
 especialidadeRoutes.get(

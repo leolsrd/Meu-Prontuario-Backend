@@ -20,6 +20,23 @@ class ListEspecialidadeService {
 
     return especialidades;
   }
+
+  async getEspecialidadeByName(name: string) {
+    if (!name) throw new Error("O nome da especialidade é obrigatório");
+
+    const especialidades = await prismaClient.especialidade.findMany({
+      where: {
+        nome: {
+          contains: name,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (!especialidades) throw new Error("Nenhuma especialidade encontrada");
+
+    return especialidades;
+  }
 }
 
 export default ListEspecialidadeService;

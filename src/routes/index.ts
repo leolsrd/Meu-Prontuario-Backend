@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import funcionarioRoutes from "./funcioario.routes";
+import funcionarioRoutes from "./funcionario.routes";
 import funcaoRoutes from "./funcao.routes";
 import operadoraRoutes from "./operadora.routes";
 import planoCategoriaRoutes from "./planoCategoria.routes";

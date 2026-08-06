@@ -37,6 +37,27 @@ class ListEspecialidadeController {
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
+
+  async getEspecialidadeByName(req: Request, res: Response) {
+    try {
+      const name: string = req.query.search as string;
+
+      const listEspecialidadeService = new ListEspecialidadeService();
+
+      const especialidades =
+        await listEspecialidadeService.getEspecialidadeByName(name);
+
+      return res.status(200).json({
+        message: "Especialidades listadas com sucesso",
+        especialidades,
+      });
+    } catch (error) {
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
 }
 
 export default ListEspecialidadeController;

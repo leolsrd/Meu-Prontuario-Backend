@@ -6,6 +6,7 @@ import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.ut
 import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
 import { parseStatusCreate } from "../../utils/parseBoolean.utils";
+import { IEspecialidadeServiceProps } from "../../@types/especialidade.types";
 
 interface ValidatedFuncionarioData {
   login: string;
@@ -35,7 +36,6 @@ class CreateFuncionarioService {
     const dataNascimento = formatAndValidateDateOfBirth(data.dataNascimento);
     const crm = data.crm?.trim();
     const ufCRM = data.ufCRM?.trim();
-    const especialidade = data.especialidade?.trim();
 
     const funcionarioExists = await prismaClient.funcionario.findFirst({
       where: { login },
@@ -85,20 +85,49 @@ class CreateFuncionarioService {
       uf: StringVaziaOrUndefinedSetNull(data.uf?.trim()),
     };
 
+    let listaEspecialidades = data.especialidade?.map((especialidade) => ({
+      idEspecialidade: especialidade.idEspecialidade?.trim(),
+      rqe: especialidade.rqe?.trim(),
+    }));
+
+    let getEspecialidadeClinicoGeral =
+      await prismaClient.especialidade.findFirst({
+        where: {
+          nome: "Clínico Geral",
+        },
+        select: {
+          idEspecialidade: true,
+        },
+      });
+
+    const especialidadeClinicoGeral: IEspecialidadeServiceProps = {
+      ...getEspecialidadeClinicoGeral,
+      rqe: "0000",
+    };
+
+    const dataValidatedMedico = {
+      ...dataValidated,
+      crm,
+      ufCRM,
+    };
+
+    const especialidade: IEspecialidadeServiceProps[] = listaEspecialidades
+      ? listaEspecialidades
+      : [especialidadeClinicoGeral];
+
     const result = await prismaClient.$transaction(async (tx) => {
       const funcaoMedico = await tx.funcao.findFirst({
         where: { idFuncao },
       });
 
       if (funcaoMedico?.nome === "Medico") {
-        if (!crm || !especialidade || !ufCRM) {
-          throw new Error(
-            "Dados de médico faltando (CRM, especialidade ou UF/CRM)",
-          );
+        if (!crm || !ufCRM) {
+          throw new Error("Dados de médico faltando (CRM e UF/CRM)");
         }
 
         const medicoCriado = await new CreateMedicoService().execute(
-          data,
+          dataValidatedMedico,
+          especialidade,
           tx as any,
         );
 

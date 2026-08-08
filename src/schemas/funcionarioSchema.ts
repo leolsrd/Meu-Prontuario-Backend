@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+const especialidadeSchema = z.object({
+  idEspecialidade: z
+    .uuid({ message: "ID da especialidade inválido (deve ser UUID)." })
+    .optional(),
+  rqe: z
+    .string()
+    .min(3, { message: "O rqe deve ter pelo menos 3 caracteres" })
+    .optional()
+    .nullable(),
+});
+
 export const createFuncionarioSchema = z.object({
   body: z
     .object({
@@ -80,7 +91,7 @@ export const createFuncionarioSchema = z.object({
         .max(2, { message: "A UF deve ter pelo menos 2 caracteres" })
         .optional()
         .default("NI"),
-      idFuncao: z.string(),
+      idFuncao: z.uuid({ message: "O id da funcao é obrigatório" }),
       crm: z
         .string()
         .min(6, { message: "O CRM deve ter 6 caracteres" })
@@ -90,7 +101,7 @@ export const createFuncionarioSchema = z.object({
         .or(z.literal("")),
       ufCRM: z
         .string()
-        .min(2, { message: "A UF/CRM deve ter pelo menos 2 caracteres" })
+        .min(2, { message: "A UF/CRM deve ter no mínimo 2 caracteres" })
         .max(2, { message: "A UF/CRM deve ter no máximo 2 caracteres" })
         .optional()
         .default("")
@@ -102,16 +113,10 @@ export const createFuncionarioSchema = z.object({
           return false;
         } else if (data.crm && !data.ufCRM) {
           return false;
-        } else if (data.crm && data.ufCRM) {
-          return false;
         } else if (!data.crm && data.ufCRM) {
           return false;
         } else if (!data.crm && data.ufCRM) {
           return false;
-        } else if (!data.crm && !data.ufCRM) {
-          return false;
-        } else if (!data.crm && !data.ufCRM) {
-          return true;
         }
         return true;
       },
@@ -120,6 +125,7 @@ export const createFuncionarioSchema = z.object({
         path: ["crm", "ufCRM"],
       },
     ),
+  especialidades: z.array(especialidadeSchema).optional(),
 });
 
 export const authFuncinarioSchema = z.object({

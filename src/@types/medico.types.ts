@@ -1,11 +1,15 @@
+import { IMedicoEspecialidadeProps } from "./medicoEspecialidade.types";
 import {
   CreateFuncionarioServiceProps,
   UpdateFuncionarioServiceProps,
 } from "./funcionario.types";
 
-export interface MedicoServiceProps extends CreateFuncionarioServiceProps {
+export interface MedicoServiceProps
+  extends CreateFuncionarioServiceProps, IMedicoEspecialidadeProps {
   crm: string;
   ufCRM: string;
+  rqe?: string;
+  especialidade?: IMedicoEspecialidadeProps[];
 }
 
 export interface CreateMedicoServiceProps {

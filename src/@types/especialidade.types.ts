@@ -1,5 +1,4 @@
-export interface EspecialidadeServiceProps {
+export interface IEspecialidadeServiceProps {
   idEspecialidade?: string;
-  nome: string;
-  status?: boolean | string;
+  rqe?: string;
 }

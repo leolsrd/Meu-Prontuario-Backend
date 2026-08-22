@@ -6,7 +6,6 @@ import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.ut
 import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
 import { parseStatusCreate } from "../../utils/parseBoolean.utils";
-import { IEspecialidadeServiceProps } from "../../@types/especialidade.types";
 
 interface ValidatedFuncionarioData {
   login: string;
@@ -85,36 +84,6 @@ class CreateFuncionarioService {
       uf: StringVaziaOrUndefinedSetNull(data.uf?.trim()),
     };
 
-    let listaEspecialidades = data.especialidade?.map((especialidade) => ({
-      idEspecialidade: especialidade.idEspecialidade?.trim(),
-      rqe: especialidade.rqe?.trim(),
-    }));
-
-    let getEspecialidadeClinicoGeral =
-      await prismaClient.especialidade.findFirst({
-        where: {
-          nome: "Clínico Geral",
-        },
-        select: {
-          idEspecialidade: true,
-        },
-      });
-
-    const especialidadeClinicoGeral: IEspecialidadeServiceProps = {
-      ...getEspecialidadeClinicoGeral,
-      rqe: "0000",
-    };
-
-    const dataValidatedMedico = {
-      ...dataValidated,
-      crm,
-      ufCRM,
-    };
-
-    const especialidade: IEspecialidadeServiceProps[] = listaEspecialidades
-      ? listaEspecialidades
-      : [especialidadeClinicoGeral];
-
     const result = await prismaClient.$transaction(async (tx) => {
       const funcaoMedico = await tx.funcao.findFirst({
         where: { idFuncao },
@@ -125,9 +94,15 @@ class CreateFuncionarioService {
           throw new Error("Dados de médico faltando (CRM e UF/CRM)");
         }
 
+        const dataValidatedMedico = {
+          ...dataValidated,
+          crm,
+          ufCRM,
+          especialidade: data.especialidade,
+        };
+
         const medicoCriado = await new CreateMedicoService().execute(
           dataValidatedMedico,
-          especialidade,
           tx as any,
         );
 
@@ -151,6 +126,29 @@ class CreateFuncionarioService {
           cidade: dataValidated.cidade,
           uf: dataValidated.uf,
           idFuncao: dataValidated.idFuncao,
+        },
+        select: {
+          idFuncionario: true,
+          login: true,
+          nome: true,
+          cpfCnpj: true,
+          telefone: true,
+          dataNascimento: true,
+          cep: true,
+          logradouro: true,
+          complemento: true,
+          numero: true,
+          bairro: true,
+          cidade: true,
+          uf: true,
+          createdAt: true,
+          updatedAt: true,
+          funcao: {
+            select: {
+              idFuncao: true,
+              nome: true,
+            },
+          },
         },
       });
 

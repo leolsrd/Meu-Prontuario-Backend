@@ -1,94 +1,140 @@
-import { Request, Response } from "express";
 import prismaClient from "../../prisma";
-import { hash } from "bcryptjs";
 import { MedicoServiceProps } from "../../@types/medico.types";
-import { returnError } from "../../utils/returnError";
+import { IEspecialidadeServiceProps } from "../../@types/especialidade.types";
 
 class CreateMedicoService {
-  async execute(
-    req: Request,
-    res: Response,
-    data: MedicoServiceProps,
-    tx = prismaClient,
-  ) {
-    try {
-      const crmExist = await prismaClient.medico.findFirst({
+  async execute(data: MedicoServiceProps, tx = prismaClient) {
+    const crmExist = await tx.medico.findFirst({
+      where: {
+        crm: data.crm,
+      },
+    });
+
+    if (crmExist) {
+      throw new Error("CRM já cadastrado");
+    }
+
+    let listaEspecialidades = data.especialidade
+      ?.map((esp) => ({
+        idEspecialidade: esp.idEspecialidade?.trim(),
+        rqe: esp.rqe?.trim(),
+      }))
+      .filter((esp) => !!esp.idEspecialidade);
+
+    let listEspecialidadesValid: IEspecialidadeServiceProps[] = [];
+
+    if (listaEspecialidades && listaEspecialidades.length > 0) {
+      const idsBuscados = listaEspecialidades.map(
+        (esp) => esp.idEspecialidade as string,
+      );
+
+      const especialidadesCadastradas = await tx.especialidade.findMany({
         where: {
-          crm: data.crm,
+          idEspecialidade: { in: idsBuscados },
         },
+        select: { idEspecialidade: true },
       });
 
-      if (crmExist) {
-        return returnError({
-          messageConsole: "Já existe um médico cadastrado com este CRM",
-          statusCode: 400,
-          messageApi: "Já existe um médico cadastrado com este CRM",
-          res,
-        });
+      if (idsBuscados.length !== especialidadesCadastradas.length) {
+        throw new Error(
+          "Algumas especialidades informadas não foram encontradas no banco de dados.",
+        );
       }
 
-      const senhaCheck =
-        data.senha ?? (await process.env.SENHA_FUNCIONARIO_TESTE);
-
-      const senhaHash = await hash(senhaCheck!, 8);
-
-      const medico = await tx.medico.create({
-        data: {
-          crm: data.crm,
-          especialidade: data.especialidade,
-          ufCRM: data.ufCRM,
-          funcionario: {
-            create: {
-              login: data.login,
-              nome: data.nome,
-              idFuncao: data.idFuncao,
-              status: data.status,
-              cpfCnpj: data.cpfCnpj,
-              senha: senhaHash,
-              telefone: data.telefone,
-              dataNascimento: data.dataNascimento,
-              cep: data.cep,
-              logradouro: data.logradouro,
-              complemento: data.complemento,
-              numero: data.numero,
-              bairro: data.bairro,
-              cidade: data.cidade,
-              uf: data.uf,
-            },
-          },
-        },
-        select: {
-          crm: true,
-          especialidade: true,
-          ufCRM: true,
-          funcionario: {
-            select: {
-              login: true,
-              nome: true,
-              idFuncao: true,
-              status: true,
-              cpfCnpj: true,
-              telefone: true,
-              dataNascimento: true,
-              cep: true,
-              logradouro: true,
-              complemento: true,
-              numero: true,
-              bairro: true,
-              cidade: true,
-              uf: true,
-              createdAt: true,
-              updatedAt: true,
-            },
-          },
-        },
+      listEspecialidadesValid = listaEspecialidades;
+    } else {
+      const getEspecialidadeClinicoGeral = await tx.especialidade.findFirst({
+        where: { nome: "Clínico Geral" },
+        select: { idEspecialidade: true },
       });
 
-      return medico;
-    } catch (error) {
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
+      if (!getEspecialidadeClinicoGeral) {
+        throw new Error(
+          "Especialidade 'Clínico Geral' não cadastrada no banco de dados.",
+        );
+      }
+
+      listEspecialidadesValid = [
+        {
+          idEspecialidade: getEspecialidadeClinicoGeral.idEspecialidade,
+          rqe: "0000",
+        },
+      ];
     }
+
+    const medico = await tx.medico.create({
+      data: {
+        crm: data.crm,
+        ufCRM: data.ufCRM,
+        funcionario: {
+          create: {
+            login: data.login,
+            nome: data.nome,
+            idFuncao: data.idFuncao,
+            status: data.status,
+            cpfCnpj: data.cpfCnpj,
+            senha: data.senha,
+            telefone: data.telefone,
+            dataNascimento: data.dataNascimento,
+            cep: data.cep,
+            logradouro: data.logradouro,
+            complemento: data.complemento,
+            numero: data.numero,
+            bairro: data.bairro,
+            cidade: data.cidade,
+            uf: data.uf,
+          },
+        },
+        medicoEspecialidade: {
+          create: listEspecialidadesValid.map((esp) => ({
+            idEspecialidade: esp.idEspecialidade!,
+            rqe: esp.rqe,
+          })),
+        },
+      },
+      select: {
+        crm: true,
+        ufCRM: true,
+        funcionario: {
+          select: {
+            login: true,
+            nome: true,
+            funcao: {
+              select: {
+                idFuncao: true,
+                nome: true,
+              },
+            },
+            status: true,
+            cpfCnpj: true,
+            telefone: true,
+            dataNascimento: true,
+            cep: true,
+            logradouro: true,
+            complemento: true,
+            numero: true,
+            bairro: true,
+            cidade: true,
+            uf: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        medicoEspecialidade: {
+          select: {
+            idEspecialidade: true,
+            rqe: true,
+            especialidade: {
+              select: {
+                nome: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return medico;
   }
 }
 

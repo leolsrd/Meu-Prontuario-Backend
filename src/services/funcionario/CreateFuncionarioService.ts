@@ -35,7 +35,6 @@ class CreateFuncionarioService {
     const dataNascimento = formatAndValidateDateOfBirth(data.dataNascimento);
     const crm = data.crm?.trim();
     const ufCRM = data.ufCRM?.trim();
-    const especialidade = data.especialidade?.trim();
 
     const funcionarioExists = await prismaClient.funcionario.findFirst({
       where: { login },
@@ -91,14 +90,19 @@ class CreateFuncionarioService {
       });
 
       if (funcaoMedico?.nome === "Medico") {
-        if (!crm || !especialidade || !ufCRM) {
-          throw new Error(
-            "Dados de médico faltando (CRM, especialidade ou UF/CRM)",
-          );
+        if (!crm || !ufCRM) {
+          throw new Error("Dados de médico faltando (CRM e UF/CRM)");
         }
 
+        const dataValidatedMedico = {
+          ...dataValidated,
+          crm,
+          ufCRM,
+          especialidade: data.especialidade,
+        };
+
         const medicoCriado = await new CreateMedicoService().execute(
-          data,
+          dataValidatedMedico,
           tx as any,
         );
 
@@ -122,6 +126,29 @@ class CreateFuncionarioService {
           cidade: dataValidated.cidade,
           uf: dataValidated.uf,
           idFuncao: dataValidated.idFuncao,
+        },
+        select: {
+          idFuncionario: true,
+          login: true,
+          nome: true,
+          cpfCnpj: true,
+          telefone: true,
+          dataNascimento: true,
+          cep: true,
+          logradouro: true,
+          complemento: true,
+          numero: true,
+          bairro: true,
+          cidade: true,
+          uf: true,
+          createdAt: true,
+          updatedAt: true,
+          funcao: {
+            select: {
+              idFuncao: true,
+              nome: true,
+            },
+          },
         },
       });
 

@@ -16,16 +16,14 @@ export const parseStatusCreate = (
 };
 
 export const parseStatusUpdate = (value: string | undefined | boolean) => {
-  return value === undefined
-    ? undefined
-    : typeof value === "string"
-      ? (() => {
-          const normalizedStatus = value.trim().toLowerCase();
+  if (value === undefined) return false;
 
-          if (normalizedStatus === "true") return true;
-          if (normalizedStatus === "false") return false;
+  if (typeof value === "boolean") return value;
 
-          throw new Error("O campo status deve ser 'true' ou 'false'");
-        })()
-      : value;
+  const normalizedStatus = value.trim().toLowerCase();
+
+  if (normalizedStatus === "true") return true;
+  if (normalizedStatus === "false") return false;
+
+  throw new Error("O campo status deve ser 'true' ou 'false'");
 };

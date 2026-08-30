@@ -15,7 +15,6 @@ import { ListFuncionarioController } from "../controllers/funcionario/ListFuncio
 // * Rotas de Funcionários
 const funcionarioRoutes: Router = Router();
 
-// ? Rota para criar funcionário
 funcionarioRoutes.post(
   "/",
   isAuthenticated,
@@ -32,7 +31,7 @@ funcionarioRoutes.post(
 
 // ? Rota para alterar funcionário?
 funcionarioRoutes.put(
-  "/atualizar",
+  "/:idFuncionario",
   isAuthenticated,
   validateSchema(updateFuncionarioSchema),
   new UpdateFuncionarioController().handle,

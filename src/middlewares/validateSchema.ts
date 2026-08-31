@@ -11,19 +11,9 @@ export function validateSchema(schema: ZodType) {
       });
 
       return next();
-    } catch (error: any) {
-      console.log("Investigando o erro");
-
-      const util = require("util");
-      console.log(util.inspect(error, { showHidden: false, depth: null }));
-
-      if (error && error.stack) {
-        console.error("\n--- RASTRO DE LINHAS (STACK) ---");
-        console.error(error.stack);
-      }
-      console.error("========================================\n");
-
+    } catch (error) {
       if (error instanceof ZodError) {
+        console.error("Erro de validação de dados", error);
         return res.status(400).json({
           error: "Erro de validação de dados",
           details: error.issues.map((issue) => ({

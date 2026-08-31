@@ -18,7 +18,7 @@ export interface CreateMedicoServiceProps {
 }
 
 export interface UpdateMedicoServiceProps extends UpdateFuncionarioServiceProps {
-  idMedico: string;
   crm?: string;
   ufCRM?: string;
+  especialidade?: IMedicoEspecialidadeProps[];
 }

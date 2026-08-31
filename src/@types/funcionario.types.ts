@@ -25,7 +25,7 @@ export interface UpdateFuncionarioServiceProps {
   cpfCnpj?: string | null;
   senha?: string;
   telefone?: string | null;
-  dataNascimento?: Date;
+  dataNascimento?: Date | string | null;
   cep?: string | null;
   logradouro?: string | null;
   complemento?: string | null;

@@ -9,7 +9,7 @@ datasource db {
 
 model Funcao {
   idFuncao     String        @id @default(uuid()) @map("id_funcao")
-  nome         String        @default("Admin") @unique
+  nome         String        @unique
   status       Boolean       @default(true)
   descricao    String?
   createdAt    DateTime      @default(now()) @map("created_at")
@@ -28,13 +28,13 @@ model Funcionario {
   senha          String
   telefone       String?
   dataNascimento DateTime? @map("data_nascimento") @db.Date
-  cep            String?
+  cep            String? @db.VarChar(8)
   logradouro     String?
   complemento    String?
   numero         Int?
   bairro         String?
   cidade         String?
-  uf             String?
+  uf             String?   @db.VarChar(2)
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   idFuncao       String    @map("id_funcao")
@@ -46,8 +46,8 @@ model Funcionario {
 
 model Medico {
   idMedico      String   @id @default(uuid()) @map("id_medico")
-  crm           String
-  ufCRM         String   @map("uf_crm")
+  crm           String   @db.VarChar(20)
+  ufCRM         String   @db.VarChar(2) @map("uf_crm")
   idFuncionario String   @unique @map("id_funcionario")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
@@ -77,7 +77,7 @@ model Especialidade {
 model MedicoEspecialidade {
   idMedico        String   @map("id_medico")
   idEspecialidade String   @map("id_especialidade")
-  rqe             String?
+  rqe             String?  @db.VarChar(20)
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -92,18 +92,20 @@ model Paciente {
   idPaciente      String              @id @default(uuid()) @map("id_paciente")
   nome            String
   status          Boolean             @default(true)
-  cpfCnpj         String              @unique @map("cpf_cnpj") @db.VarChar(14)
+  cpfCnpj         String?              @unique @map("cpf_cnpj") @db.VarChar(14)
+  cpfCnpjResponsavel         String?               @map("cpf_cnpj_responsavel") @db.VarChar(14)
+  nomeResponsavel String?     @map("nome_responsavel")
   telefone        String?
   email           String?
   dataNascimento  DateTime?           @map("data_nascimento") @db.Date
-  sexo            String?
-  cep             String?
+  sexo            Sexo
+  cep             String? @db.VarChar(8)
   logradouro      String?
   complemento     String?
   numero          Int?
   bairro          String?
   cidade          String?
-  uf              String?
+  uf              String?   @db.VarChar(2)
   tipoAtendimento TipoAtendimento     @default(PARTICULAR) @map("tipo_atendimento")
   createdAt       DateTime            @default(now()) @map("created_at")
   updatedAt       DateTime            @updatedAt @map("updated_at")
@@ -169,4 +171,10 @@ enum TipoTitularidade {
 enum AbrangenciaPlano {
   NACIONAL
   REGIONAL
+}
+
+enum Sexo {
+  MASCULINO
+  FEMININO
+  OUTRO
 }

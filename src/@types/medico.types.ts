@@ -9,7 +9,7 @@ export interface MedicoServiceProps
   crm: string;
   ufCRM: string;
   rqe?: string;
-  especialidade?: IMedicoEspecialidadeProps[];
+  especialidades?: IMedicoEspecialidadeProps[];
 }
 
 export interface CreateMedicoServiceProps {

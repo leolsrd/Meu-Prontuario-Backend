@@ -1,14 +1,21 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodError, ZodType } from "zod";
+import { ZodError, z } from "zod";
 
-export function validateSchema(schema: ZodType) {
+export function validateSchema(schema: z.ZodSchema) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.parseAsync({
+      const validated = (await schema.parseAsync({
         body: req.body,
         query: req.query,
         params: req.params,
-      });
+      })) as any;
+
+      req.body = validated.body;
+
+      // Para query e params, usamos Object.assign para modificar os valores internos
+      // sem quebrar a regra de "somente leitura" do Express
+      if (validated.query) Object.assign(req.query, validated.query);
+      if (validated.params) Object.assign(req.params, validated.params);
 
       return next();
     } catch (error) {
@@ -19,14 +26,11 @@ export function validateSchema(schema: ZodType) {
           details: error.issues.map((issue) => ({
             message: issue.message,
             path: issue.path,
-            value: error.issues[0]?.input,
           })),
         });
       }
-      next(error);
+
+      return next(error);
     }
-    return res.status(500).json({
-      error: "Erro interno do servidor",
-    });
   };
 }

@@ -2,15 +2,14 @@ import { Router } from "express";
 
 import { validateSchema } from "../middlewares/validateSchema";
 import AuthFuncionarioController from "../controllers/funcionario/AuthFuncionarioController";
-import {
-  authFuncinarioSchema,
-  createFuncionarioSchema,
-  updateFuncionarioSchema,
-} from "../schemas/funcionarioSchema";
+// import { updateFuncionarioSchema } from "../schemas/funcionario/updateFuncionarioSchema";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { CreateFuncionarioController } from "../controllers/funcionario/CreateFuncionarioController";
 import { UpdateFuncionarioController } from "../controllers/funcionario/UpdateFuncionarioController";
 import { ListFuncionarioController } from "../controllers/funcionario/ListFuncionarioController";
+import { createFuncionarioSchema } from "../schemas/funcionario/createFuncionarioSchema";
+import { authFuncinarioSchema } from "../schemas/funcionario/authFuncionarioSchema";
+import { updateFuncionarioSchema } from "../schemas/funcionario/updateFuncionarioSchema";
 
 // * Rotas de Funcionários
 const funcionarioRoutes: Router = Router();

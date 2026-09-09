@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
 
-import funcionarioRoutes from "./funcionario.routes";
 import funcaoRoutes from "./funcao.routes";
 import operadoraRoutes from "./operadora.routes";
 import planoCategoriaRoutes from "./planoCategoria.routes";
 import medicoRoutes from "./medico.routes";
 import especialidadeRoutes from "./especialidade.routes";
+import funcionarioRoutes from "./funcionario.routes";
 
 const globalRouter: Router = Router();
 

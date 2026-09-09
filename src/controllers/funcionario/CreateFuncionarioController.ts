@@ -15,6 +15,8 @@ class CreateFuncionarioController {
         funcionario,
       });
     } catch (error) {
+      next(error);
+
       if (error instanceof Error)
         return res.status(400).json({ error: error.message });
 

@@ -1,20 +1,22 @@
-import prismaClient from "../../prisma";
 import { MedicoServiceProps } from "../../@types/medico.types";
 import { IEspecialidadeServiceProps } from "../../@types/especialidade.types";
+import { Prisma } from "../../generated/prisma/client";
 
 class CreateMedicoService {
-  async execute(data: MedicoServiceProps, tx = prismaClient) {
+  async execute(data: MedicoServiceProps, tx: Prisma.TransactionClient) {
+    // return await tx.$transaction(async (tx) => {
     const crmExist = await tx.medico.findFirst({
       where: {
         crm: data.crm,
+        ufCRM: data.ufCRM,
       },
     });
 
     if (crmExist) {
-      throw new Error("CRM já cadastrado");
+      throw new Error("CRM já cadastrado com este número para essa UF.");
     }
 
-    let listaEspecialidades = data.especialidade
+    let listaEspecialidades = data.especialidades
       ?.map((esp) => ({
         idEspecialidade: esp.idEspecialidade?.trim(),
         rqe: esp.rqe?.trim(),
@@ -135,6 +137,7 @@ class CreateMedicoService {
     });
 
     return medico;
+    // });
   }
 }
 

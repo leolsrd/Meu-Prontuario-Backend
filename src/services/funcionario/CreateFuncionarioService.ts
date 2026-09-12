@@ -7,23 +7,8 @@ import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
 import { parseStatusCreate } from "../../utils/parseBoolean.utils";
 
-interface ValidatedFuncionarioData {
-  login: string;
-  nome: string;
-  idFuncao: string;
-  status: boolean;
-  cpfCnpj: string | null;
-  senha: string;
-  telefone: string | null;
-  dataNascimento: string | null | Date;
-  cep: string | null;
-  logradouro: string | null;
-  complemento: string | null;
-  numero: number;
-  bairro: string | null;
-  cidade: string | null;
-  uf: string | null;
-}
+// Instancie fora da classe para evitar recriação na memória a cada execução
+const createMedicoService = new CreateMedicoService();
 
 class CreateFuncionarioService {
   async execute(data: MedicoServiceProps) {
@@ -31,42 +16,18 @@ class CreateFuncionarioService {
     const nome = data.nome.trim();
     const idFuncao = data.idFuncao.trim();
     const status = parseStatusCreate(data.status);
-    const senhaHash = await validateAndHashPassword(data.senha);
-    const dataNascimento = formatAndValidateDateOfBirth(data.dataNascimento);
     const crm = data.crm?.trim();
     const ufCRM = data.ufCRM?.trim();
-
-    const funcionarioExists = await prismaClient.funcionario.findFirst({
-      where: { login },
-    });
-
-    if (funcionarioExists) {
-      throw new Error("Funcionário já cadastrado no sistema com este login.");
-    }
-
-    const funcaoExists = await prismaClient.funcao.findFirst({
-      where: { idFuncao },
-    });
-
-    if (!funcaoExists) {
-      throw new Error("Função não encontrada no sistema.");
-    }
 
     const cpfCnpj = cleanAndRemoveMask(data.cpfCnpj);
     const telefone = cleanAndRemoveMask(data.telefone);
     const cep = cleanAndRemoveMask(data.cep);
 
-    if (cpfCnpj) {
-      const cpfCnpjExists = await prismaClient.funcionario.findFirst({
-        where: { cpfCnpj },
-      });
+    // Operações assincronas pesadas que não dependem do banco de dados.
+    const senhaHash = await validateAndHashPassword(data.senha);
+    const dataNascimento = formatAndValidateDateOfBirth(data.dataNascimento);
 
-      if (cpfCnpjExists) {
-        throw new Error("CPF/CNPJ já cadastrado no sistema");
-      }
-    }
-
-    const dataValidated: ValidatedFuncionarioData = {
+    const dataValidated = {
       login,
       nome,
       idFuncao,
@@ -84,12 +45,36 @@ class CreateFuncionarioService {
       uf: StringVaziaOrUndefinedSetNull(data.uf?.trim()),
     };
 
-    const result = await prismaClient.$transaction(async (tx) => {
-      const funcaoMedico = await tx.funcao.findFirst({
+    // 3. Toda a lógica de banco envelopada com segurança na transação
+    return await prismaClient.$transaction(async (tx) => {
+      // Validação de Login Único (Segura contra concorrência)
+      const funcionarioExists = await tx.funcionario.findFirst({
+        where: { login },
+      });
+      if (funcionarioExists) {
+        throw new Error("Funcionário já cadastrado no sistema com este login.");
+      }
+
+      // Validação de CPF/CNPJ Único
+      if (cpfCnpj) {
+        const cpfCnpjExists = await tx.funcionario.findFirst({
+          where: { cpfCnpj },
+        });
+        if (cpfCnpjExists) {
+          throw new Error("CPF/CNPJ já cadastrado no sistema");
+        }
+      }
+
+      // Valida a função uma única vez
+      const funcaoCadastrada = await tx.funcao.findFirst({
         where: { idFuncao },
       });
+      if (!funcaoCadastrada) {
+        throw new Error("Função não encontrada no sistema.");
+      }
 
-      if (funcaoMedico?.nome === "Medico") {
+      // Fluxo específico caso a função seja "Medico"
+      if (funcaoCadastrada.nome === "Medico") {
         if (!crm || !ufCRM) {
           throw new Error("Dados de médico faltando (CRM e UF/CRM)");
         }
@@ -98,18 +83,14 @@ class CreateFuncionarioService {
           ...dataValidated,
           crm,
           ufCRM,
-          especialidade: data.especialidade,
+          especialidades: data.especialidades,
         };
 
-        const medicoCriado = await new CreateMedicoService().execute(
-          dataValidatedMedico,
-          tx as any,
-        );
-
-        return medicoCriado;
+        return await createMedicoService.execute(dataValidatedMedico, tx);
       }
 
-      const funcionarioCriado = await tx.funcionario.create({
+      // Criação do funcionário padrão
+      return await tx.funcionario.create({
         data: {
           status: dataValidated.status,
           nome: dataValidated.nome,
@@ -131,6 +112,7 @@ class CreateFuncionarioService {
           idFuncionario: true,
           login: true,
           nome: true,
+          status: true,
           cpfCnpj: true,
           telefone: true,
           dataNascimento: true,
@@ -151,11 +133,7 @@ class CreateFuncionarioService {
           },
         },
       });
-
-      return funcionarioCriado;
     });
-
-    return result;
   }
 }
 

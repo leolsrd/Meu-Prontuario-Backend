@@ -4,7 +4,6 @@ import { Prisma } from "../../generated/prisma/client";
 
 class CreateMedicoService {
   async execute(data: MedicoServiceProps, tx: Prisma.TransactionClient) {
-    // return await tx.$transaction(async (tx) => {
     const crmExist = await tx.medico.findFirst({
       where: {
         crm: data.crm,
@@ -137,7 +136,6 @@ class CreateMedicoService {
     });
 
     return medico;
-    // });
   }
 }
 

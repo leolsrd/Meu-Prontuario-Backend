@@ -27,7 +27,7 @@ const updateFuncionarioBodySchemas = z
       .pipe(
         z
           .string()
-          .min(3, { message: "O nome deve ter pelo menos 3 caracteres" })
+          .min(3, { message: "O login deve ter pelo menos 3 caracteres" })
           .optional(),
       ),
     status: z.coerce
@@ -65,19 +65,20 @@ const updateFuncionarioBodySchemas = z
           .min(11, { message: "O telefone deve ter pelo menos 11 dígitos" })
           .or(z.literal(""))
           .optional(),
-      )
-      .default(""),
+      ),
     dataNascimento: z
       .string()
-      .refine((val) => !isNaN(Date.parse(val)), {
+      .optional() // .optional() movido para o início para blindar contra undefined
+      .refine((val) => !val || !isNaN(Date.parse(val)), {
         message: "Data inválida, formato esperado: YYYY-MM-DD",
       })
-      .transform((val) => new Date(val))
-      .refine((date) => date <= new Date(), {
+      .transform((val) => (val ? new Date(val) : undefined)) // Só transforma se existir
+      .refine((date) => !date || date <= new Date(), {
         message: "A data de nascimento não pode ser no futuro.",
       })
       .refine(
         (date) => {
+          if (!date) return true; // Se for opcional e não enviado, passa direto
           const today = new Date();
           const age = today.getFullYear() - date.getFullYear();
           const monthDifference = today.getMonth() - date.getMonth();
@@ -93,8 +94,7 @@ const updateFuncionarioBodySchemas = z
         {
           message: "Você deve ter pelo menos 18 anos.",
         },
-      )
-      .optional(),
+      ),
     cep: z
       .string()
       .optional()
@@ -103,9 +103,9 @@ const updateFuncionarioBodySchemas = z
         z
           .string()
           .min(8, { message: "O cep deve ter 8 dígitos" })
-          .or(z.literal("")),
-      )
-      .default("00.000-000"),
+          .or(z.literal(""))
+          .optional(),
+      ),
     logradouro: z
       .string()
       .min(3, { message: "O logradouro deve ter pelo menos 3 caracteres" })
@@ -116,7 +116,7 @@ const updateFuncionarioBodySchemas = z
       .min(3, { message: "O complemento deve ter pelo menos 3 caracteres" })
       .or(z.literal(""))
       .optional(),
-    numero: z.number().optional().default(0),
+    numero: z.number().optional(),
     bairro: z
       .string({ error: "Bairro não é String" })
       .min(3, { message: "O bairro deve ter pelo menos 3 caracteres" })
@@ -132,31 +132,27 @@ const updateFuncionarioBodySchemas = z
       .min(2, { message: "A UF deve ter pelo menos 2 caracteres" })
       .max(2, { message: "A UF deve ter pelo menos 2 caracteres" })
       .or(z.literal(""))
-      .optional()
-      .default("NI"),
+      .optional(),
     idFuncao: z.string().optional(),
     crm: z
       .string()
       .min(6, { message: "O CRM deve ter 6 caracteres" })
       .max(6, { message: "O CRM deve ter 6 caracteres" })
       .optional()
-      .default("")
       .or(z.literal("")),
     ufCRM: z
       .string()
       .min(2, { message: "A UF/CRM deve ter pelo menos 2 caracteres" })
       .max(2, { message: "A UF/CRM deve ter no máximo 2 caracteres" })
       .optional()
-      .default("")
       .or(z.literal("")),
     especialidades: z.array(especialidadeSchema).optional(),
   })
   .refine(
     (data) => {
-      if ((data.crm && !data.ufCRM) || (!data.crm && data.ufCRM)) {
-        return false;
-      }
-      return true;
+      const temCRM = !!data.crm && data.crm !== "";
+      const temUF = !!data.ufCRM && data.ufCRM !== "";
+      return (temCRM && temUF) || (!temCRM && !temUF);
     },
     {
       message: "O CRM e UF/CRM devem ser informados juntos",
@@ -167,7 +163,7 @@ const updateFuncionarioBodySchemas = z
 const updateFuncionarioParamsSchemas = z.object({
   idFuncionario: z
     .string()
-    .uuid({ message: "O id do funcionário é obrigatório" }), // Adicionado tipo z.string() antes do uuid
+    .uuid({ message: "O id do funcionário é obrigatório" }),
 });
 
 export const updateFuncionarioSchema = z.object({

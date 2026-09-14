@@ -20,16 +20,6 @@ const updateFuncionarioBodySchemas = z
       .pipe(
         z.string().min(3, "O nome deve ter pelo menos 3 caracteres").optional(),
       ),
-    login: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z
-          .string()
-          .min(3, { message: "O login deve ter pelo menos 3 caracteres" })
-          .optional(),
-      ),
     status: z.coerce
       .boolean({ message: "O status deve ser true ou false" })
       .optional(),

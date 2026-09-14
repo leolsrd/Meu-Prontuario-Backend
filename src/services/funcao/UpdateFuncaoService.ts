@@ -1,7 +1,7 @@
 import prismaClient from "../../prisma";
 import { UpdateFuncaoServiceProps } from "../../@types/funcao.types";
-import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
 import { parseStatusUpdate } from "../../utils/parseBoolean.utils";
+import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaOrUndefinedSetNull.utils";
 
 class UpdateFuncaoService {
   async execute(data: UpdateFuncaoServiceProps) {

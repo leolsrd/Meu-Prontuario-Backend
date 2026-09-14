@@ -2,7 +2,7 @@ import prismaClient from "../../prisma";
 import { cleanAndRemoveMask } from "../../utils/cleanAndRemoveMask.utils";
 import { formatAndValidateDateOfBirth } from "../../utils/formatAndValidateDateOfBirth.utils";
 import { validateAndHashPassword } from "../../utils/validateAndHashPassword.utils";
-import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaSetNull.utils";
+import { StringVaziaOrUndefinedSetNull } from "../../utils/stringVaziaOrUndefinedSetNull.utils";
 import { MedicoServiceProps } from "../../@types/medico.types";
 import { CreateMedicoService } from "../medico/CreateMedicoService";
 import { parseStatusCreate } from "../../utils/parseBoolean.utils";

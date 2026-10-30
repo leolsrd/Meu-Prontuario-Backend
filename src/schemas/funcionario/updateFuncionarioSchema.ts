@@ -1,4 +1,12 @@
 import { z } from "zod";
+import {
+  criarCodigoOpcionalComNull,
+  criarCpfCnpjOpcionalComNull,
+  criarDataNascimentoOpcionalComNull,
+  criarEstadoOpcionalComNull,
+  criarStringOpcionalComNull,
+  criarTelefoneOpcionalComNull,
+} from "../shared";
 
 const especialidadeSchema = z.object({
   idEspecialidade: z
@@ -13,117 +21,49 @@ const especialidadeSchema = z.object({
 
 const updateFuncionarioBodySchemas = z
   .object({
-    nome: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z.string().min(3, "O nome deve ter pelo menos 3 caracteres").optional(),
-      ),
+    nome: criarStringOpcionalComNull(
+      3,
+      "O nome deve ter pelo menos 3 caracteres",
+    ),
     status: z.coerce
       .boolean({ message: "O status deve ser true ou false" })
       .optional(),
-    cpfCnpj: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z
-          .string()
-          .min(11, { message: "O CPF/CNPJ deve ter pelo menos 11 dígitos" })
-          .max(14, { message: "O CPF/CNPJ deve ter no máximo 14 dígitos" })
-          .or(z.literal(""))
-          .optional(),
-      ),
-    senha: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z
-          .string()
-          .min(4, { message: "A senha deve ter pelo menos 4 caracteres" })
-          .optional(),
-      ),
-    telefone: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z
-          .string()
-          .min(11, { message: "O telefone deve ter pelo menos 11 dígitos" })
-          .or(z.literal(""))
-          .optional(),
-      ),
-    dataNascimento: z
-      .string()
-      .optional() // .optional() movido para o início para blindar contra undefined
-      .refine((val) => !val || !isNaN(Date.parse(val)), {
-        message: "Data inválida, formato esperado: YYYY-MM-DD",
-      })
-      .transform((val) => (val ? new Date(val) : undefined)) // Só transforma se existir
-      .refine((date) => !date || date <= new Date(), {
-        message: "A data de nascimento não pode ser no futuro.",
-      })
-      .refine(
-        (date) => {
-          if (!date) return true; // Se for opcional e não enviado, passa direto
-          const today = new Date();
-          const age = today.getFullYear() - date.getFullYear();
-          const monthDifference = today.getMonth() - date.getMonth();
-
-          if (
-            monthDifference < 0 ||
-            (monthDifference === 0 && today.getDate() < date.getDate())
-          ) {
-            return age - 1 >= 18;
-          }
-          return age >= 18;
-        },
-        {
-          message: "Você deve ter pelo menos 18 anos.",
-        },
-      ),
-    cep: z
-      .string()
-      .optional()
-      .transform((val) => val?.trim())
-      .pipe(
-        z
-          .string()
-          .min(8, { message: "O cep deve ter 8 dígitos" })
-          .or(z.literal(""))
-          .optional(),
-      ),
-    logradouro: z
-      .string()
-      .min(3, { message: "O logradouro deve ter pelo menos 3 caracteres" })
-      .or(z.literal(""))
-      .optional(),
-    complemento: z
-      .string()
-      .min(3, { message: "O complemento deve ter pelo menos 3 caracteres" })
-      .or(z.literal(""))
-      .optional(),
+    cpfCnpj: criarCpfCnpjOpcionalComNull(
+      "CPF ou CNPJ inválido (verifique os dígitos digitados)",
+    ),
+    senha: criarStringOpcionalComNull(
+      4,
+      "A senha deve ter pelo menos 4 caracteres",
+    ),
+    telefone: criarTelefoneOpcionalComNull(
+      "Telefone inválido. Deve conter o DDD e ter 10 (fixo) ou 11 (celular) dígitos.",
+    ),
+    dataNascimento: criarDataNascimentoOpcionalComNull(),
+    cep: criarCodigoOpcionalComNull(8, "O CEP deve ter pelo menos 8 dígitos"),
+    logradouro: criarStringOpcionalComNull(
+      4,
+      "O logradouro deve ter pelo menos 4 caracteres",
+    ),
+    complemento: criarStringOpcionalComNull(
+      4,
+      "O complemento deve ter pelo menos 4 caracteres",
+    ),
     numero: z.number().optional(),
-    bairro: z
-      .string({ error: "Bairro não é String" })
-      .min(3, { message: "O bairro deve ter pelo menos 3 caracteres" })
-      .or(z.literal(""))
-      .optional(),
-    cidade: z
+    bairro: criarStringOpcionalComNull(
+      4,
+      "O bairro deve ter pelo menos 4 caracteres",
+    ),
+    cidade: criarStringOpcionalComNull(
+      3,
+      "A cidade deve ter pelo menos 3 caracteres",
+    ),
+    uf: criarEstadoOpcionalComNull(
+      "Estado inválido. Use uma sigla válida (exemplo: PE, BA, SP)",
+    ),
+    idFuncao: z
       .string()
-      .min(3, { message: "A cidade deve ter pelo menos 3 caracteres" })
-      .or(z.literal(""))
+      .uuid({ message: "O id da funcao deve ser um UUID válido" })
       .optional(),
-    uf: z
-      .string()
-      .min(2, { message: "A UF deve ter pelo menos 2 caracteres" })
-      .max(2, { message: "A UF deve ter pelo menos 2 caracteres" })
-      .or(z.literal(""))
-      .optional(),
-    idFuncao: z.string().optional(),
     crm: z
       .string()
       .min(6, { message: "O CRM deve ter 6 caracteres" })
@@ -153,7 +93,7 @@ const updateFuncionarioBodySchemas = z
 const updateFuncionarioParamsSchemas = z.object({
   idFuncionario: z
     .string()
-    .uuid({ message: "O id do funcionário é obrigatório" }),
+    .uuid({ message: "O ID do funcionário fornecido é inválido." }),
 });
 
 export const updateFuncionarioSchema = z.object({

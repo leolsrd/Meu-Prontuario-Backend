@@ -48,7 +48,7 @@ const updateFuncionarioBodySchemas = z
       4,
       "O complemento deve ter pelo menos 4 caracteres",
     ),
-    numero: z.number().optional(),
+    numero: z.string().optional().nullable(),
     bairro: criarStringOpcionalComNull(
       4,
       "O bairro deve ter pelo menos 4 caracteres",
